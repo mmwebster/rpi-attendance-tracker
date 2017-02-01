@@ -56,8 +56,9 @@ if (len(devices) > 0):
                     if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
                         keycode_int = VALID_KEY_HASH[keycode_str]
                         print(str(keycode_int), end="")
-                byte_count += 1
+                        byte_count += 1
                 if byte_count == 7:
+                    byte_count = 0
                     print("")
 
     # error out if unable to find card reader
