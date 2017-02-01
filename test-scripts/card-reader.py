@@ -10,18 +10,18 @@ import evdev # lib for keyboard input event detection
 #################################################################################
 KEY_STATE_DOWN = 1
 KEYCODE_INT_OFFSET = -1
-VALID_KEYS = [
-    "KEY_0",
-    "KEY_1",
-    "KEY_2",
-    "KEY_3",
-    "KEY_4",
-    "KEY_5",
-    "KEY_6",
-    "KEY_7",
-    "KEY_8",
-    "KEY_9"
-]
+VALID_KEY_HASH = {
+    "KEY_0": 0,
+    "KEY_1": 1,
+    "KEY_2": 2,
+    "KEY_3": 3,
+    "KEY_4": 4,
+    "KEY_5": 5,
+    "KEY_6": 6,
+    "KEY_7": 7,
+    "KEY_8": 8,
+    "KEY_9": 9
+}
 
 #################################################################################
 # Main logic
@@ -46,14 +46,19 @@ if (len(devices) > 0):
             # rename device for readability
             card_reader = device
             # indefinitely listen for events
+            byte_count = 0
             for event in card_reader.read_loop():
-                if event.type == evdev.ecodes.EV_KEY:
+                if byte_count == 0:
+                    print("ID: ", end="")
+                if event.type == evdev.ecodes.EV_KEY and byte_count < 7:
                     event_key_state = evdev.util.categorize(event).keystate
                     keycode_str = evdev.util.categorize(event).keycode
-                    if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEYS:
-                        keycode_int = evdev.ecodes.ecodes[str(keycode_str)] + KEYCODE_INT_OFFSET
+                    if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
+                        keycode_int = VALID_KEY_HASH[keycode_str]
                         print(str(keycode_int), end="")
-                    print()
+                byte_count += 1
+		if byte_count == 7:
+                    print("")
 
     # error out if unable to find card reader
     if not discovered_card_reader:
