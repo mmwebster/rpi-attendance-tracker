@@ -50,20 +50,21 @@ if (len(devices) > 0):
             for event in card_reader.read_loop():
                 if byte_count == 0:
                     print("ID: ", end="")
-                if event.type == evdev.ecodes.EV_KEY and byte_count < 7:
+                if event.type == evdev.ecodes.EV_KEY
                     event_key_state = evdev.util.categorize(event).keystate
                     keycode_str = evdev.util.categorize(event).keycode
-                    if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
-                        keycode_int = VALID_KEY_HASH[keycode_str]
-                        print(str(keycode_int), end="")
-                        byte_count += 1
-                        # add newline
-                        if byte_count == 7:
-                            print("")
-                print("    >>event_key_state: " + str(event_key_state) + ", keycode_str: " + str(keycode_str))
-                if event_key_state == KEY_STATE_UP and keycode_str == "KEY_SEMICOLON":
-                    # last byte in card, so reset byte count
-                    byte_count = 0
+                    if byte_count < 7:
+                        if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
+                            keycode_int = VALID_KEY_HASH[keycode_str]
+                            print(str(keycode_int), end="")
+                            byte_count += 1
+                            # add newline
+                            if byte_count == 7:
+                                print("")
+                    print("    >>event_key_state: " + str(event_key_state) + ", keycode_str: " + str(keycode_str))
+                    if event_key_state == KEY_STATE_UP and keycode_str == "KEY_SEMICOLON":
+                        # last byte in card, so reset byte count
+                        byte_count = 0
 
     # error out if unable to find card reader
     if not discovered_card_reader:
