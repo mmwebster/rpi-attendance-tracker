@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#/usr/bin/env python
 
 #######################################################################
 # Import libraries
 #######################################################################
+import evdev # lib for keyboard input event detection
 
 #######################################################################
 # Perform initializations
@@ -11,6 +12,9 @@
 #######################################################################
 # Main logic
 #######################################################################
+devices = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
+for device in devices:
+    print(device.fn, device.name, device.phys)
 
 #######################################################################
 # House keeping..close interfaces and processes
