@@ -9,7 +9,7 @@ import evdev # lib for keyboard input event detection
 # Perform initializations
 #################################################################################
 KEY_STATE_DOWN = 1
-KEY_STATE_UP = 1
+KEY_STATE_UP = 0
 VALID_KEY_HASH = {
     "KEY_0": 0,
     "KEY_1": 1,
@@ -39,7 +39,6 @@ if (len(devices) > 0):
         print("    " + str(i) + ") (" + device.fn + ", "
                 + device.name + ", " + device.phys + ")")
         # search for card reader by its name, "HID c216:0180"
-        # if str(device.name) == "Mitsumi Electric Apple Extended USB Keyboard":
         if str(device.name) == "HID c216:0180":
             print("Discovered card reader..listening for events \
                     until test harness is closed.")
@@ -48,21 +47,20 @@ if (len(devices) > 0):
             # indefinitely listen for events
             byte_count = 0
             for event in card_reader.read_loop():
-                if byte_count == 0:
-                    print("ID: ", end="")
                 if event.type == evdev.ecodes.EV_KEY
                     event_key_state = evdev.util.categorize(event).keystate
                     keycode_str = evdev.util.categorize(event).keycode
                     if byte_count < 7:
                         if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
                             keycode_int = VALID_KEY_HASH[keycode_str]
+                            if byte_count == 0:
+                                print("ID: ", end="")
                             print(str(keycode_int), end="")
                             byte_count += 1
                             # add newline
                             if byte_count == 7:
                                 print("")
-                    print("    >>event_key_state: " + str(event_key_state) + ", keycode_str: " + str(keycode_str))
-                    if event_key_state == KEY_STATE_UP and keycode_str == "KEY_SEMICOLON":
+                    if event_key_state == KEY_STATE_UP and keycode_str == "KEY_ENTER":
                         # last byte in card, so reset byte count
                         byte_count = 0
 
