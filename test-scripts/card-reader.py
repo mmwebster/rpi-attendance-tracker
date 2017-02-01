@@ -47,7 +47,7 @@ if (len(devices) > 0):
             # indefinitely listen for events
             byte_count = 0
             for event in card_reader.read_loop():
-                if event.type == evdev.ecodes.EV_KEY
+                if event.type == evdev.ecodes.EV_KEY:
                     event_key_state = evdev.util.categorize(event).keystate
                     keycode_str = evdev.util.categorize(event).keycode
                     if byte_count < 7:
