@@ -25,18 +25,19 @@ if (len(devices) > 0):
         print("    " + str(i) + ") (" + device.fn + ", "
                 + device.name + ", " + device.phys + ")")
         # search for card reader by its name, "HID c216:0180"
+        # if str(device.name) == "Mitsumi Electric Apple Extended USB Keyboard":
         if str(device.name) == "HID c216:0180":
-            print("Discovered card reader..listening for events \\
+            print("Discovered card reader..listening for events \
                     until test harness is closed.")
             # rename device for readability
             card_reader = device
             # indefinitely listen for events
             for event in card_reader.read_loop():
                 if event.type == evdev.ecodes.EV_KEY:
-                    print(categorize(event))
+                    print(str(event))
 
     # error out if unable to find card reader
-    if !discovered_card_reader:
+    if not discovered_card_reader:
         print("ERROR: Unable to find the card reader")
 else:
     print("ERROR: No input event devices available")
