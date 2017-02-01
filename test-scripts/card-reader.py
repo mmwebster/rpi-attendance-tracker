@@ -16,9 +16,9 @@ import evdev # lib for keyboard input event detection
 devices = [evdev.InputDevice(fn) for fn in evdev.list_devices()]
 # find card reader device
 if (len(devices) > 0):
-    print("Input event devices available. Devices are: ")
-    for device, i in enumerate(devices):
-        print("   ", i, ") ", device.fn, device.name, device.phys)
+    print("Input event devices available (" + str(len(devices)) + "). Devices are: ")
+    for i, device in enumerate(devices):
+        print("    " + str(i) + ") (" + device.fn + ", " + device.name + ", " + device.phys + ")")
 else:
     print("ERROR: No input event devices available")
 
