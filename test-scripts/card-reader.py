@@ -57,7 +57,7 @@ if (len(devices) > 0):
                         keycode_int = VALID_KEY_HASH[keycode_str]
                         print(str(keycode_int), end="")
                 byte_count += 1
-		if byte_count == 7:
+                if byte_count == 7:
                     print("")
 
     # error out if unable to find card reader
