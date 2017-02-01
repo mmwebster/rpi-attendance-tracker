@@ -10,7 +10,6 @@ import evdev # lib for keyboard input event detection
 #################################################################################
 KEY_STATE_DOWN = 1
 KEY_STATE_UP = 1
-KEYCODE_INT_OFFSET = -1
 VALID_KEY_HASH = {
     "KEY_0": 0,
     "KEY_1": 1,
@@ -61,9 +60,10 @@ if (len(devices) > 0):
                         # add newline
                         if byte_count == 7:
                             print("")
-                    if event_key_state == KEY_STATE_UP and keycode_str == "KEY_SEMICOLON":
-                        # last byte in card, so reset byte count
-                        byte_count = 0
+                    print("event_key_state: " + str(event_key_state) + ", keycode_str: " + str(keycode_str))
+	    if event_key_state == KEY_STATE_UP and keycode_str == "KEY_SEMICOLON":
+		# last byte in card, so reset byte count
+		byte_count = 0
 
     # error out if unable to find card reader
     if not discovered_card_reader:
