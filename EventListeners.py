@@ -103,7 +103,7 @@ class CardReader(EventListener):
                                         print str(keycode_int),
                                         exponent = (10^(7-byte_count))
                                         student_id += int(keycode_int) * exponent
-                                        print("         < SID: " + student_id + ", EXP=" + exponent)
+                                        print("         < SID: " + str(student_id) + ", EXP=" + str(exponent))
                                         byte_count += 1
                                         # add newline
                                         if byte_count == 7:
