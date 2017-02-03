@@ -19,6 +19,9 @@ def tempState(event):
     print("FSM: TMP_STATE[{0}]".format(event.name))
     if (event.name == "TIMER"):
         return { "next_state": "TMP", "did_error": False}
+    elif (event.name == "CARD_READ"):
+        print("    >ID: {0}".format(event.data["id"]))
+        return { "next_state": "TMP", "did_error": False }
     elif (event.name == "ENTRY"):
         return { "did_error": False }
     elif (event.name == "EXIT"):

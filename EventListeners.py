@@ -90,6 +90,7 @@ class CardReader(EventListener):
                         card_reader = device
                         # indefinitely listen for events
                         byte_count = 0
+                        student_id = 0
                         for event in card_reader.read_loop():
                             if event.type == evdev.ecodes.EV_KEY:
                                 event_key_state = evdev.util.categorize(event).keystate
@@ -100,9 +101,13 @@ class CardReader(EventListener):
                                         if byte_count == 0:
                                             print "ID: ",
                                         print str(keycode_int),
+                                        student_id += int(keycode_int) * 10^(7-byte_count)
                                         byte_count += 1
                                         # add newline
                                         if byte_count == 7:
+                                            self.eventQueue.put(Event(
+                                                Event.EVENTS["CARD_READ"], {"id": student_id}
+                                                ))
                                             print("")
                                 if event_key_state == KEY_STATE_UP and keycode_str == "KEY_ENTER":
                                     # last byte in card, so reset byte count
