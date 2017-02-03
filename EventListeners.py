@@ -102,12 +102,14 @@ class CardReader(EventListener):
                                             print "ID: ",
                                         print str(keycode_int),
                                         student_id += int(keycode_int) * 10^(7-byte_count)
+                                        print("         < SID: " + student_id)
                                         byte_count += 1
                                         # add newline
                                         if byte_count == 7:
                                             self.eventQueue.put(Event(
                                                 Event.EVENTS["CARD_READ"], {"id": student_id}
                                                 ))
+                                            student_id = 0
                                             print("")
                                 if event_key_state == KEY_STATE_UP and keycode_str == "KEY_ENTER":
                                     # last byte in card, so reset byte count
