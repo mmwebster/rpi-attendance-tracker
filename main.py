@@ -52,7 +52,7 @@ def main():
     eventListeners = [
             EventListeners.Init(eventQueue), # passes init event to FSM
             EventListeners.Timer(eventQueue, 5.0),
-            EventListeners.CardReader(eventQueue, period, "my-device"),
+            EventListeners.CardReader(eventQueue, 2, "my-device"),
             ]
     # startup all event listener threads
     for eventListener in eventListeners:
