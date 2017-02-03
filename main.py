@@ -51,7 +51,8 @@ def main():
     # instantiate all event listeners
     eventListeners = [
             EventListeners.Init(eventQueue), # passes init event to FSM
-            EventListeners.Timer(eventQueue, 5.0)
+            EventListeners.Timer(eventQueue, 5.0),
+            EventListeners.CardReader(eventQueue, period, "my-device"),
             ]
     # startup all event listener threads
     for eventListener in eventListeners:
@@ -84,7 +85,6 @@ def main():
             # set current state to next
             current_state_handler = next_state_handler
             current_state_str = next_state_str
-
 
     # error'd out..print the message
     print("ERROR: " + error_message)
