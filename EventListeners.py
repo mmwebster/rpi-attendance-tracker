@@ -99,20 +99,15 @@ class CardReader(EventListener):
                                 if byte_count < 7:
                                     if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
                                         keycode_int = VALID_KEY_HASH[keycode_str]
-                                        if byte_count == 0:
-                                            print "ID: ",
-                                        print str(keycode_int),
                                         exponent = int(math.pow(10,(6-byte_count)))
                                         student_id += int(keycode_int) * exponent
-                                        print("         < SID: " + str(student_id) + ", EXP=" + str(exponent))
                                         byte_count += 1
-                                        # add newline
+                                        # end of student id
                                         if byte_count == 7:
                                             self.eventQueue.put(Event(
                                                 Event.EVENTS["CARD_READ"], {"id": student_id}
                                                 ))
                                             student_id = 0
-                                            print("")
                                 if event_key_state == KEY_STATE_UP and keycode_str == "KEY_ENTER":
                                     # last byte in card, so reset byte count
                                     byte_count = 0
