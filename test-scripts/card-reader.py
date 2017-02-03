@@ -54,8 +54,8 @@ if (len(devices) > 0):
                         if event_key_state == KEY_STATE_DOWN and keycode_str in VALID_KEY_HASH:
                             keycode_int = VALID_KEY_HASH[keycode_str]
                             if byte_count == 0:
-                                print("ID: ", end="")
-                            print(str(keycode_int), end="")
+                                print "ID: ",
+                            print str(keycode_int),
                             byte_count += 1
                             # add newline
                             if byte_count == 7:

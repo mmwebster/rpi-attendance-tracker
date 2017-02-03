@@ -70,6 +70,3 @@ while True:
 #################################################################################
 # House keeping..close interfaces and processes
 #################################################################################
-
-
-# left off, priority queue not working b/c it's comparing events instead of their priorities
