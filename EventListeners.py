@@ -8,6 +8,7 @@ import time
 from Event import Event
 from Queue import Queue
 import evdev # lib for keyboard input event detection
+import math
 
 #################################################################################
 # Perform initializations
@@ -101,7 +102,7 @@ class CardReader(EventListener):
                                         if byte_count == 0:
                                             print "ID: ",
                                         print str(keycode_int),
-                                        exponent = (10^(7-byte_count))
+                                        exponent = int(math.pow(10,(6-byte_count)))
                                         student_id += int(keycode_int) * exponent
                                         print("         < SID: " + str(student_id) + ", EXP=" + str(exponent))
                                         byte_count += 1
