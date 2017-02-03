@@ -18,7 +18,8 @@ from Queue import Queue
 #################################################################################
 class EventListener(threading.Thread):
     def __init__(self, eventQueue):
-        threading.Thread.__init__(self)
+        # init the thread and run as daemon to kill it when the main thread dies
+        threading.Thread.__init__(self, daemon=True)
         self.eventQueue = eventQueue
 
 class CardReader(EventListener):
