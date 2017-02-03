@@ -16,11 +16,11 @@ def startupState(event):
         print("ERROR: event has no event handler")
 
 def tempState(event):
-    print("FSM: TMP_STATE[{0}]".format(event.name))
+    print("FSM: TMP_STATE[{0},{1}]".format(event.name, str(event.data)))
     if (event.name == "TIMER"):
         return { "next_state": "TMP", "did_error": False}
     elif (event.name == "CARD_READ"):
-        print("    >ID: {0}".format(event.data["id"]))
+        # print("FSM: TMP_STATE[{0},{1}]".format(event.name, event.data["id"]))
         return { "next_state": "TMP", "did_error": False }
     elif (event.name == "ENTRY"):
         return { "did_error": False }

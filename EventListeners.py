@@ -118,8 +118,6 @@ class CardReader(EventListener):
                     time.sleep(period)
 
 
-
-
 #################################################################################
 # House keeping..close interfaces and processes
 #################################################################################
