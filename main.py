@@ -8,6 +8,7 @@ import EventListeners # contains all event listeners
 import FSMStateHandlers # contains all state handlers
 from Event import Event
 from Queue import PriorityQueue
+from os import environ as ENV
 
 #####################################################################################
 # Globals
@@ -28,13 +29,24 @@ def fsm_run(state_handler, event):
 #####################################################################################
 def main():
     #################################################################################
-    # Perform initializations
+    # Perform tests
     #################################################################################
+    # Check if test mode enabled
+    if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+       not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+           print "Attendance Tracker Test Mode DISABLED"
+    else:
+       print "Attendance Tracker Test Mode ENABLED"
+
     # run all lib tests
     print("MAIN: Started up! Running tests.")
+
     # TODO: run tests here
     # TODO: check if each test passed and proceed if so
 
+    #################################################################################
+    # Perform initializations
+    #################################################################################
     # init and declare FSM properties
     state_handlers = {
             "STARTUP": FSMStateHandlers.startupState,
@@ -58,8 +70,9 @@ def main():
     for eventListener in eventListeners:
         eventListener.start()
 
+    #################################################################################
     # Begin the main FSM runloop
-    print("MAIN: Starting up the main FSM...")
+    #################################################################################
     while not did_error:
         # If there are events to process
         if not eventQueue.empty():
