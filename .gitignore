@@ -6,6 +6,9 @@ __pycache__/
 # Secret for Google Sheets API
 client_secret.json
 
+# General
+_*.* # any file prefaced with underscore (for tmp testing purposes)
+
 # C extensions
 *.so
 
