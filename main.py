@@ -102,7 +102,8 @@ def main():
     # error'd out..print the message
     print("ERROR: " + error_message)
 
-main()
+if __name__ == '__main__':
+    main()
 
 #####################################################################################
 # House keeping..close interfaces and processes
