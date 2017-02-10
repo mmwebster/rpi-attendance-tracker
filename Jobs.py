@@ -5,6 +5,7 @@
 #################################################################################
 import threading
 import time
+from DropboxStorage import DropboxStorage
 from datetime import datetime
 from os import environ as ENV
 
@@ -92,6 +93,27 @@ class AsyncWriteTimeEntry(Job):
             self.localStorage.time_in_entries[str(self.student_id)] = \
                 {"epoch_in": epoch, "ts_in": timestamp}
             print("Appended In entry: " + str(in_entry))
+
+# TODO: this should be paired with a service, jobs are one-off
+class AsyncPeriodicSyncWithDropbox(Job):
+    # @param period Time in seconds to wait between syncs
+    def __init__(self, period, file_names):
+        Job.__init__(self)
+        self.period = period
+        self.file_names = file_names
+        # necessary since in inf. loop, temporary until ported to service
+        self.setDaemon(True)
+
+    def run_prod(self):
+        dbx = DropboxStorage(ENV["AT_DROPBOX_AUTH_TOKEN"], ENV["AT_LOCAL_STORAGE_PATH"])
+        while True:
+            # wait for `period` to run
+            time.sleep(self.period)
+            # log it
+            print("Syncing with dropbox")
+            # sync all of self.files
+            for file_name in self.file_names:
+                dbx.upload(file_name)
 
 
 #################################################################################

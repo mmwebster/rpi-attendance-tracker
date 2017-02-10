@@ -8,6 +8,8 @@
 import threading
 import EventListeners # contains all event listeners
 import FSMStateHandlers # contains all state handlers
+import Jobs
+import DropboxStorage
 from Event import Event
 from Queue import PriorityQueue
 from os import environ as ENV
@@ -75,6 +77,10 @@ def main():
 
     # instantiate the local storage
     localStorage = LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"])
+
+    # instantiate the dropbox storage and queue the period sync
+    Jobs.queue(Jobs.AsyncPeriodicSyncWithDropbox(20,
+        ["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"]))
 
     #################################################################################
     # Begin the main FSM runloop
