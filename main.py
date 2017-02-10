@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# @note ENV vars: ATTENDANCE_TRACKER_TEST, and AT_LOCAL_STORAGE_PATH
+
 #####################################################################################
 # Import libraries
 #####################################################################################
@@ -9,6 +11,7 @@ import FSMStateHandlers # contains all state handlers
 from Event import Event
 from Queue import PriorityQueue
 from os import environ as ENV
+from LocalStorage import LocalStorage
 
 #####################################################################################
 # Globals
@@ -18,9 +21,9 @@ from os import environ as ENV
 #####################################################################################
 # FSM body
 #####################################################################################
-def fsm_run(state_handler, event):
+def fsm_run(state_handler, event, localStorage):
     # call the current state's handler function and save it's returned data
-    state_return = state_handler(event)
+    state_return = state_handler(event, localStorage)
     return state_return
 
 
@@ -70,6 +73,11 @@ def main():
     for eventListener in eventListeners:
         eventListener.start()
 
+    # instantiate the local storage
+    # TODO: possibly make the path an ENV var
+    # localStorage = LocalStorage("/media/pi/NICKYIVY/milo/")
+    localStorage = LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"])
+
     #################################################################################
     # Begin the main FSM runloop
     #################################################################################
@@ -77,7 +85,7 @@ def main():
         # If there are events to process
         if not eventQueue.empty():
             # Fetch the highest priority event and process it
-            state_return = fsm_run(current_state_handler, eventQueue.get())
+            state_return = fsm_run(current_state_handler, eventQueue.get(), localStorage)
             # extract the next state string from the returned hash
             next_state_str = state_return["next_state"]
             # extract the error return from the handler if present
@@ -91,9 +99,9 @@ def main():
             # if the state changed
             if not next_state_str == current_state_str:
                 # run current state with exit event (ignore return)
-                fsm_run(current_state_handler, Event(Event.EVENTS["EXIT"]))
+                fsm_run(current_state_handler, Event(Event.EVENTS["EXIT"]), localStorage)
                 # run next state with entry event (ignore return)
-                fsm_run(next_state_handler, Event(Event.EVENTS["ENTRY"]))
+                fsm_run(next_state_handler, Event(Event.EVENTS["ENTRY"]), localStorage)
 
             # set current state to next
             current_state_handler = next_state_handler

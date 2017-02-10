@@ -1,10 +1,12 @@
+import Jobs
+
 ##########################################################################################
 # FSM state functions
 # @desc Definitions for each state of the FSM. They must return a state name
 #       corresponding to the next state. Python doesn't have switch statements,
 #       so using a lookup table to call the handler associated with each state.
 ##########################################################################################
-def startupState(event):
+def startupState(event, localStorage):
     print("FSM: TMP_STATE[{0},{1}]".format(event.name, str(event.data)))
     if (event.name == "INIT"):
         return { "next_state": "TMP", "did_error": False }
@@ -15,11 +17,13 @@ def startupState(event):
     else:
         print("ERROR: event has no event handler")
 
-def tempState(event):
+def tempState(event, localStorage):
     print("FSM: TMP_STATE[{0},{1}]".format(event.name, str(event.data)))
     if (event.name == "TIMER"):
         return { "next_state": "TMP", "did_error": False}
     elif (event.name == "CARD_READ"):
+        # asyncronously write entry to the USB stick
+        Jobs.queue(Jobs.AsyncWriteTimeEntry(event.data, localStorage))
         # print("FSM: TMP_STATE[{0},{1}]".format(event.name, event.data["id"]))
         return { "next_state": "TMP", "did_error": False }
     elif (event.name == "ENTRY"):
