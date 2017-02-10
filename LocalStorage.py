@@ -25,6 +25,8 @@ class LocalStorage():
         # load values contained in config file
         self.config = {}
         self.load_config_file()
+        # hash of when the student checked in, if they have
+        self.time_in_entries = {}
 
     # @desc Opens config file, stores all of its key/value pairs, then closes it
     def load_config_file(self):
@@ -39,7 +41,12 @@ class LocalStorage():
         if key in self.config:
             return self.config[key]
         else:
-            return "ERROR"
+            return "NOT_FOUND"
+
+    def append_rows(self, file_name, data):
+        with open(self.drive_path + "/" + file_name, 'ab') as f:
+            csv_writer = csv.writer(f)
+            csv_writer.writerows(data)
 
 #################################################################################
 # House keeping..close interfaces and processes

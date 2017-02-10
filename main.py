@@ -74,8 +74,6 @@ def main():
         eventListener.start()
 
     # instantiate the local storage
-    # TODO: possibly make the path an ENV var
-    # localStorage = LocalStorage("/media/pi/NICKYIVY/milo/")
     localStorage = LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"])
 
     #################################################################################
