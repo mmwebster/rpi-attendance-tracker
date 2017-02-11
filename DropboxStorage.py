@@ -28,7 +28,8 @@ class DropboxStorage():
     # @desc Opens config file, stores all of its key/value pairs, then closes it
     def upload(self, file_name):
         with open(self.drive_path + "/" + file_name, 'rb') as f:
-            self.dbx.files_upload(f.read(), "/" + file_name)
+            mode = (dropbox.files.WriteMode.overwrite) # allow overwrite
+            self.dbx.files_upload(f.read(), "/" + file_name, mode)
 
 #################################################################################
 # House keeping..close interfaces and processes
