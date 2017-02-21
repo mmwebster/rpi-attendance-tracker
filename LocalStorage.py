@@ -30,7 +30,7 @@ class LocalStorage():
 
     # @desc Opens config file, stores all of its key/value pairs, then closes it
     def load_config_file(self):
-        with open(self.drive_path + "config.csv", 'r') as config_file:
+        with open(self.drive_path + "/" + "config.csv", 'r') as config_file:
             config_file_reader = csv.reader(config_file)
 
             for row in enumerate(config_file_reader):
