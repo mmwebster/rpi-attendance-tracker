@@ -26,6 +26,13 @@ def queue(job):
 #################################################################################
 # Class definitions
 #################################################################################
+# @desc Jobs are created for one-off tasks in order to maintain clean
+#       thread abstractions for different purposes. Jobs also make it easier to
+#       limit the load on the CPU when having multiple processes running. By
+#       setting the concurrencyLimit paramater, you can control how many jobs are
+#       processed concurrently, and therefore the load on the CPU from processing
+#       jobs. The default concurrency limit is -1, which disables queuing and
+#       executes jobs as soon as they come in.
 class Job(threading.Thread):
     def __init__(self):
         # init the thread
