@@ -5,28 +5,9 @@
 #####################################################################################
 # Import libraries
 #####################################################################################
-import threading
-import EventListeners # contains all event listeners
 import FSMStateHandlers # contains all state handlers
-import Jobs
-import DropboxStorage
-from Event import Event
-from Queue import PriorityQueue
 from os import environ as ENV
-from LocalStorage import LocalStorage
-
-#####################################################################################
-# Globals
-#####################################################################################
-
-
-#####################################################################################
-# FSM body
-#####################################################################################
-def fsm_run(state_handler, event, localStorage):
-    # call the current state's handler function and save it's returned data
-    state_return = state_handler(event, localStorage)
-    return state_return
+import PyFSM
 
 
 #####################################################################################
@@ -54,17 +35,9 @@ def main():
     #################################################################################
     # init and declare FSM properties
     state_handlers = {
-            "STARTUP": FSMStateHandlers.startupState,
-            "TMP": FSMStateHandlers.tempState
+            "INIT": FSMStateHandlers.InitState
             }
-    current_state_str = "STARTUP"
-    # init the next_state reference with the startupState handler
-    current_state_handler = state_handlers[current_state_str]
-    did_error = False
-    error_message = ""
 
-    # instantiate the event queue
-    eventQueue = PriorityQueue() # thread-safe queue
     # instantiate all event listeners
     eventListeners = [
             EventListeners.Init(eventQueue), # passes init event to FSM
@@ -116,15 +89,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-#####################################################################################
-# House keeping..close interfaces and processes
-#####################################################################################
-
-# # clean up all libs on exit
-# si7021.__exit__(None, None, None)
-# seg7.__exit__(None, None, None)
-# servo.__exit__(None, None, None)
-# mailer.__exit__(None, None, None)
-# # close pi gpio ref
-# pi.stop()
