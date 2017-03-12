@@ -6,7 +6,7 @@
 from PyFSMException import InitializationError
 from Job import Job
 from Service import Service
-from EventListener import EventListener
+import EventListener
 from Event import Event
 from Queue import PriorityQueue
 
@@ -26,24 +26,32 @@ class PyFSM():
         self.enabledLibs = enabledLibs
         # add defaults
         self.eventListeners.extend(
-                [EventListener.InitEventListener, EventListener.TimerEventListener])
+                [EventListener.InitEventListener()])
         # add user defined
         self.services.extend(services)
         self.eventListeners.extend(eventListeners)
         for stateHandler in stateHandlers:
-            self.stateHandlers[stateHandler.name] = stateHandler
+            self.stateHandlers[stateHandler.name()] = stateHandler
 
         # TODO: figure out how to init this properly, given the new format
 
         # init current state
-        if "INIT" in stateHandlers:
-            self.currentState = stateHandlers["INIT"]
+        print("State handlers:")
+        print(str(self.stateHandlers))
+        if "INIT" in self.stateHandlers:
+            self.currentState = self.stateHandlers["INIT"]
         else:
             print("ERROR: No InitState defined in the stateHandlers dictionary.")
             raise InitializationError("No InitState defined in the stateHandlers dictionary.")
 
         # instantiate the event queue
         self.eventQueue = PriorityQueue() # thread-safe queue
+
+        # startup all event listeners and services
+        for eventListener in self.eventListeners:
+            eventListener.run()
+        for service in self.services:
+            service.run()
 
     # @desc Call this method to start the FSM, after initializing it. This method
     #       will only return if there's an error.
@@ -52,9 +60,9 @@ class PyFSM():
         # Begin the main FSM runloop
         while not did_error:
             # If there are events to process
-            if not eventQueue.empty():
+            if not self.eventQueue.empty():
                 # Fetch the highest priority event and process it
-                state_return = self._run(current_state_handler, eventQueue.get(), localStorage)
+                state_return = self._run(current_state_handler, self.eventQueue.get(), localStorage)
                 # extract the next state string from the returned hash
                 next_state_str = state_return["next_state"]
                 # extract the error return from the handler if present
@@ -86,7 +94,3 @@ class PyFSM():
         # call the current state's handler function and save it's returned data
         state_return = state_handler(event, localStorage)
         return state_return
-
-    def _appendToDictByName():
-        
-

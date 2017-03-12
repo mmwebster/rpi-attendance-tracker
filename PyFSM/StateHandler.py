@@ -4,7 +4,7 @@
 # Import libraries
 #################################################################################
 import threading
-# from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 #################################################################################
 # Perform initializations
@@ -14,18 +14,20 @@ import threading
 # Class definitions
 #################################################################################
 # @note User MUST define a state handler with the name "INIT"
-class StateHandler():
+class StateHandler(object):
+    # __metaclass__ = ABCMeta
+
     # @note USER DEFINED
     # @desc Must return an array of string corresponding to the names of all libs
     #       to be passed to the state handler's run method as arguments
-    @abstractproperty
+    @classmethod
     def name(self):
         return None
 
     # @note USER DEFINED
     # @desc Must return an array of string corresponding to the names of all libs
     #       to be passed to the state handler's run method as arguments
-    @abstractproperty
+    @classmethod
     def args(self):
         return None
 
@@ -42,7 +44,7 @@ class StateHandler():
     #         `ENTRY` or `EVENT`, the `next_state` need not be defined, as this
     #         event is generated internally and the whatever transition that
     #         prompted the generation of the event will persist.
-    @abstractmethod
+    @classmethod
     def run(self, args):
         return None
 

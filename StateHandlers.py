@@ -1,5 +1,10 @@
-from PyFSM import StateHandler
-from abc import abstractmethod, abstractproperty
+#!/usr/bin/env python
+
+#################################################################################
+# Import libraries
+#################################################################################
+from PyFSM.StateHandler import StateHandler
+from abc import abstractmethod, abstractproperty, ABCMeta
 
 ##########################################################################################
 # FSM state functions
@@ -7,28 +12,29 @@ from abc import abstractmethod, abstractproperty
 #       corresponding to the next state. Python doesn't have switch statements,
 #       so using a lookup table to call the handler associated with each state.
 ##########################################################################################
-class InitState(StateHandler):
-    @abstractproperty
+class InitStateHandler(StateHandler):
+    @classmethod
     def name(self):
         return "INIT"
 
-    @abstractproperty
+    @classmethod
     def args(self):
         return [ "LocalStorage", "DropboxStorage"]
 
-    @abstractmethod
+    @classmethod
     def run(self, args):
-        if (args["event"].name == "ENTRY"):
+        print("Init function processing event: " + str(args["event"].name()))
+        if (args["event"].name() == "ENTRY"):
             # entering INIT state
             return { "did_error": False }
-        elif (args["event"].name == "INIT"):
+        elif (args["event"].name() == "INIT"):
             # processing INIT event
             return { "next_state": "MY_SECOND_STATE", "did_error": False }
-        elif (args["event"].name == "EXIT"):
+        elif (args["event"].name() == "EXIT"):
             # exiting INIT state
             return { "did_error": False }
         else:
-            return { "did_error": }
+            return { "did_error": True, "error_message": "Invalid event" }
 
 #
 # def startupState(event, localStorage):

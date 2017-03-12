@@ -7,6 +7,7 @@
 #####################################################################################
 import Jobs
 import PyFSM
+from PyFSM.pyFSM import PyFSM
 import Events
 import Services
 import StateHandlers
@@ -36,36 +37,42 @@ def main():
     #################################################################################
     # Perform initializations
     #################################################################################
+    services = []
+    eventListeners = [PyFSM.EventListener.TimerEventListener()]
+    stateHandlers = [StateHandlers.InitStateHandler]
+    enabledLibs = []
+
     # init and declare FSM properties
-    events = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
-    stateHandlers = {
-                        "INIT": FSMStateHandlers.InitState
-                     }
-
-    # TODO: create all event listeners (subclasses from Service)
-    services = [
-                    Services.Timer(5.0),
-                    Services.CardReader(2, "my-device"),
-                    Services.AsyncPeriodicSyncWithDropbox(20,
-                        ["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])
-               ]
-
-    enabledLibs = [
-            {
-                "name": "LocalStorage",
-                "path": ENV["AT_LOCAL_STORAGE_PATH"]
-            },
-            {
-                "name": "DropboxStorage",
-                "token": ENV["AT_DROPBOX_AUTH_TOKEN"],
-                "path": ENV["AT_LOCAL_STORAGE_PATH"]
-            }
-           ]
+    # events = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
+    # stateHandlers = {
+    #                     "INIT": FSMStateHandlers.InitState
+    #                  }
+    #
+    # # TODO: create all event listeners (subclasses from Service)
+    # services = [
+    #                 Services.Timer(5.0),
+    #                 Services.CardReader(2, "my-device"),
+    #                 Services.AsyncPeriodicSyncWithDropbox(20,
+    #                     ["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])
+    #            ]
+    #
+    # enabledLibs = [
+    #         {
+    #             "name": "LocalStorage",
+    #             "path": ENV["AT_LOCAL_STORAGE_PATH"]
+    #         },
+    #         {
+    #             "name": "DropboxStorage",
+    #             "token": ENV["AT_DROPBOX_AUTH_TOKEN"],
+    #             "path": ENV["AT_LOCAL_STORAGE_PATH"]
+    #         }
+    #        ]
 
     #################################################################################
     # Begin the main FSM runloop
     #################################################################################
-    pyFSM = PyFSM(events, stateHandlers, services, enabledLibs)
+    # pyFSM = PyFSM(events, stateHandlers, services, enabledLibs)
+    pyFSM = PyFSM(services, eventListeners, stateHandlers, enabledLibs)
     error_message = pyFSM.start()
 
     # error'd out..print the message
