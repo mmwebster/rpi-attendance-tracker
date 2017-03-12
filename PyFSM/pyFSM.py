@@ -4,16 +4,36 @@
 # Import libraries
 #####################################################################################
 from PyFSMException import InitializationError
+from Job import Job
+from Service import Service
+from EventListener import EventListener
+from Event import Event
+from Queue import PriorityQueue
+
+# TODO: create a dictionary of state handlers based on their "name" abstract property during init of PyFSM
 
 
 #####################################################################################
 # Class Definitions
 #####################################################################################
 class PyFSM():
-    def __init__(self, stateHandlers, enabledLibs):
+    def __init__(self, services, eventListeners, stateHandlers, enabledLibs):
         print "Init'ing PyFSM"
-        self.stateHandlers = stateHandlers
+        # init internals
+        self.services = []
+        self.eventListeners = []
+        self.stateHandlers = {}
         self.enabledLibs = enabledLibs
+        # add defaults
+        self.eventListeners.extend(
+                [EventListener.InitEventListener, EventListener.TimerEventListener])
+        # add user defined
+        self.services.extend(services)
+        self.eventListeners.extend(eventListeners)
+        for stateHandler in stateHandlers:
+            self.stateHandlers[stateHandler.name] = stateHandler
+
+        # TODO: figure out how to init this properly, given the new format
 
         # init current state
         if "INIT" in stateHandlers:
@@ -66,4 +86,7 @@ class PyFSM():
         # call the current state's handler function and save it's returned data
         state_return = state_handler(event, localStorage)
         return state_return
+
+    def _appendToDictByName():
+        
 

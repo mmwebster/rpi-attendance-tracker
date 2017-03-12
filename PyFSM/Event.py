@@ -9,37 +9,51 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 #################################################################################
 # Perform initializations
 #################################################################################
-EVENT_PRIORITIES = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
-EVENT_NAME = 0
-EVENT_PRIORITY = 1
 
 #################################################################################
 # Class definitions
 #################################################################################
 class Event():
-    # abstract public event types
+    # event priority types
     @abstractproperty
-    def EVENTS(self):
-        pass
-    EVENTS = {
-        "INIT": ("INIT", EVENT_PRIORITIES["INIT"]),
-        "TIMER": ("TIMER", EVENT_PRIORITIES["TIMER"]),
-        "ENTRY": ("ENTRY", EVENT_PRIORITIES["HIGH"]),
-        "EXIT": ("EXIT", EVENT_PRIORITIES["HIGH"]),
-        "CARD_READ": ("CARD_READ", EVENT_PRIORITIES["MEDIUM"]),
-    }
+    def EVENT_PRIORITY(self, name):
+        priority_types = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
+        return priority_types[name]
 
     # Event private functions
-    def __init__(self, event, data=None):
-        self.priority = event[EVENT_PRIORITY]
-        self.name = event[EVENT_NAME]
+    def __init__(self, data=None):
         self.data = data
     def __cmp__(self, other):
         return cmp(self.priority, other.priority)
 
-    # Event pub functions
+    # user defined event properties
     def name(self):
-        return self.name
+        return None
+    def priority(self):
+        return 0
+
+# Default event types
+class InitEvent(Event):
+    def name(self):
+        return "INIT"
+    def priority(self):
+        return Event.EVENT_PRIORITY("INIT")
+class EntryEvent(Event):
+    def name(self):
+        return "ENTRY"
+    def priority(self):
+        return Event.EVENT_PRIORITY("MEDIUM")
+class ExitEvent(Event):
+    def name(self):
+        return "EXIT"
+    def priority(self):
+        return Event.EVENT_PRIORITY("MEDIUM")
+class TimerEvent(Event):
+    def name(self):
+        return "TIMER"
+    def priority(self):
+        return Event.EVENT_PRIORITY("TIMER")
+
 
 #################################################################################
 # House keeping..close interfaces and processes

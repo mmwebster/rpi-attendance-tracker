@@ -5,10 +5,13 @@
 #####################################################################################
 # Import libraries
 #####################################################################################
-import FSMStateHandlers # contains all state handlers
-from os import environ as ENV
+import Jobs
 import PyFSM
-
+import Events
+import Services
+import StateHandlers
+import EventListeners
+from os import environ as ENV
 
 #####################################################################################
 # Main logic
@@ -27,62 +30,43 @@ def main():
     # run all lib tests
     print("MAIN: Started up! Running tests.")
 
-    # TODO: run tests here
-    # TODO: check if each test passed and proceed if so
+    # TODOB: run tests here
+    # TODOB: check if each test passed and proceed if so
 
     #################################################################################
     # Perform initializations
     #################################################################################
     # init and declare FSM properties
-    state_handlers = {
-            "INIT": FSMStateHandlers.InitState
+    events = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
+    stateHandlers = {
+                        "INIT": FSMStateHandlers.InitState
+                     }
+
+    # TODO: create all event listeners (subclasses from Service)
+    services = [
+                    Services.Timer(5.0),
+                    Services.CardReader(2, "my-device"),
+                    Services.AsyncPeriodicSyncWithDropbox(20,
+                        ["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])
+               ]
+
+    enabledLibs = [
+            {
+                "name": "LocalStorage",
+                "path": ENV["AT_LOCAL_STORAGE_PATH"]
+            },
+            {
+                "name": "DropboxStorage",
+                "token": ENV["AT_DROPBOX_AUTH_TOKEN"],
+                "path": ENV["AT_LOCAL_STORAGE_PATH"]
             }
-
-    # instantiate all event listeners
-    eventListeners = [
-            EventListeners.Init(eventQueue), # passes init event to FSM
-            EventListeners.Timer(eventQueue, 5.0),
-            EventListeners.CardReader(eventQueue, 2, "my-device"),
-            ]
-    # startup all event listener threads
-    for eventListener in eventListeners:
-        eventListener.start()
-
-    # instantiate the local storage
-    localStorage = LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"])
-
-    # instantiate the dropbox storage and queue the period sync
-    Jobs.queue(Jobs.AsyncPeriodicSyncWithDropbox(20,
-        ["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"]))
+           ]
 
     #################################################################################
     # Begin the main FSM runloop
     #################################################################################
-    while not did_error:
-        # If there are events to process
-        if not eventQueue.empty():
-            # Fetch the highest priority event and process it
-            state_return = fsm_run(current_state_handler, eventQueue.get(), localStorage)
-            # extract the next state string from the returned hash
-            next_state_str = state_return["next_state"]
-            # extract the error return from the handler if present
-            if state_return["did_error"]:
-                didError = True
-                error_message = state_return["error_message"]
-
-            # set the next state function using the returned next state str
-            next_state_handler = state_handlers[next_state_str]
-
-            # if the state changed
-            if not next_state_str == current_state_str:
-                # run current state with exit event (ignore return)
-                fsm_run(current_state_handler, Event(Event.EVENTS["EXIT"]), localStorage)
-                # run next state with entry event (ignore return)
-                fsm_run(next_state_handler, Event(Event.EVENTS["ENTRY"]), localStorage)
-
-            # set current state to next
-            current_state_handler = next_state_handler
-            current_state_str = next_state_str
+    pyFSM = PyFSM(events, stateHandlers, services, enabledLibs)
+    error_message = pyFSM.start()
 
     # error'd out..print the message
     print("ERROR: " + error_message)

@@ -1,3 +1,4 @@
+from PyFSM import StateHandler
 from abc import abstractmethod, abstractproperty
 
 ##########################################################################################
@@ -6,9 +7,10 @@ from abc import abstractmethod, abstractproperty
 #       corresponding to the next state. Python doesn't have switch statements,
 #       so using a lookup table to call the handler associated with each state.
 ##########################################################################################
-class InitState():
-    def __init__(self):
-        print "Initing StartupState"
+class InitState(StateHandler):
+    @abstractproperty
+    def name(self):
+        return "INIT"
 
     @abstractproperty
     def args(self):
@@ -16,15 +18,18 @@ class InitState():
 
     @abstractmethod
     def run(self, args):
-        print("FSM: TMP_STATE[{0},{1}]".format(args["event"].name, str(args["event"].data)))
-        if (args["event"].name == "INIT"):
-            return { "next_state": "TMP", "did_error": False }
-        elif (args["event"].name == "ENTRY"):
+        if (args["event"].name == "ENTRY"):
+            # entering INIT state
             return { "did_error": False }
+        elif (args["event"].name == "INIT"):
+            # processing INIT event
+            return { "next_state": "MY_SECOND_STATE", "did_error": False }
         elif (args["event"].name == "EXIT"):
+            # exiting INIT state
             return { "did_error": False }
         else:
-            print("ERROR: args[event] has no args[event] handler")
+            return { "did_error": }
+
 #
 # def startupState(event, localStorage):
 #     print("FSM: TMP_STATE[{0},{1}]".format(event.name, str(event.data)))

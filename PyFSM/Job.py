@@ -5,6 +5,8 @@
 #################################################################################
 import threading
 import time
+from DropboxStorage import DropboxStorage
+from datetime import datetime
 from os import environ as ENV
 
 #################################################################################
@@ -13,18 +15,31 @@ from os import environ as ENV
 
 
 #################################################################################
+# Utility functions
+#################################################################################
+# @note Currently does not operate with a queue, just start the job immediately
+#       don't yet know if there would be any benefit to only allowing 1 job to
+#       run at a time
+def queue(job):
+    job.start()
+
+#################################################################################
 # Class definitions
 #################################################################################
-# @desc A service is a process that should be run contiously and that directly
-#       listens to particular event types, defined during its initialization
-# @note Implementation is incomplete
-class Service(threading.Thread):
+# @desc Jobs are created for one-off tasks in order to maintain clean
+#       thread abstractions for different purposes. Jobs also make it easier to
+#       limit the load on the CPU when having multiple processes running. By
+#       setting the concurrencyLimit paramater, you can control how many jobs are
+#       processed concurrently, and therefore the load on the CPU from processing
+#       jobs. The default concurrency limit is -1, which disables queuing and
+#       executes jobs as soon as they come in.
+class Job(threading.Thread):
     def __init__(self):
         # init the thread
         threading.Thread.__init__(self)
         # do not run as daemon to ensure that main thread waits until this thread
         # finishes before dieing
-        self.setDaemon(False) # default
+        self.setDaemon(False) # default, main thread must wait for completion
 
     # @desc Lifetime of the event listener, overriding Thread's def. Reads in the
     #       ENV var $ATTENDACE_TRACKER_TEST to run in test mode if the system was
