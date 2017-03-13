@@ -1,0 +1,3 @@
+[submodule "pyfsm"]
+	path = pyfsm
+	url = git@github.com:mmwebster/pyfsm.git
