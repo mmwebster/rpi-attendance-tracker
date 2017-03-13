@@ -4,10 +4,10 @@
 # Import libraries
 #################################################################################
 import time
-from PyFSM.Job import Job
+from pyfsm.Job import Job
 from datetime import datetime
 from os import environ as ENV
-from PyFSM.DropboxStorage import DropboxStorage
+from pyfsm.DropboxStorage import DropboxStorage
 
 #################################################################################
 # Perform initializations

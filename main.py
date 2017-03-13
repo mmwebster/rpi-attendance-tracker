@@ -11,8 +11,8 @@ import Services
 import StateHandlers
 import EventListeners
 from os import environ as ENV
-from PyFSM.pyFSM import PyFSM
-from PyFSM import EventListener
+from pyfsm.Pyfsm import Pyfsm
+from pyfsm import EventListener
 
 #####################################################################################
 # Main logic
@@ -50,9 +50,8 @@ def main():
     #################################################################################
     # Begin the main FSM runloop
     #################################################################################
-    # pyFSM = PyFSM(events, stateHandlers, services, enabledLibs)
-    pyFSM = PyFSM(services, eventListeners, stateHandlers, enabledLibs)
-    error_message = pyFSM.start()
+    pyfsm = Pyfsm(services, eventListeners, stateHandlers, enabledLibs)
+    error_message = pyfsm.start()
 
     # error'd out..print the message
     print("ERROR: " + error_message)

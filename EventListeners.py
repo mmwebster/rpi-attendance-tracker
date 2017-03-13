@@ -8,7 +8,7 @@ import time
 import math
 import Events
 from os import environ as ENV
-from PyFSM.EventListener import EventListener
+from pyfsm.EventListener import EventListener
 
 # Granular imports
 if not 'ATTENDANCE_TRACKER_TEST' in ENV or \

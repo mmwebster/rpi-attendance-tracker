@@ -5,7 +5,7 @@
 #################################################################################
 import Jobs
 import time
-from PyFSM.StateHandler import StateHandler
+from pyfsm.StateHandler import StateHandler
 from abc import abstractmethod, abstractproperty, ABCMeta
 
 ##########################################################################################
