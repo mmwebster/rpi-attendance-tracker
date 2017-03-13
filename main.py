@@ -13,6 +13,8 @@ import EventListeners
 from os import environ as ENV
 from pyfsm.Pyfsm import Pyfsm
 from pyfsm import EventListener
+from pyfsm.LocalStorage import LocalStorage
+from pyfsm.DropboxStorage import DropboxStorage
 
 #####################################################################################
 # Main logic
