@@ -44,7 +44,8 @@ class TempStateHandler(StateHandler):
 
     @classmethod
     def args(self):
-        return [ "LocalStorage", "DropboxStorage" ]
+        # return [ "LocalStorage", "DropboxStorage" ]
+        return [ "LocalStorage" ]
 
     @classmethod
     def run(self, args):
@@ -57,7 +58,7 @@ class TempStateHandler(StateHandler):
             return { "next_state": "TEMP", "did_error": False}
         elif (args["event"].name() == "CARD_READ"):
             # asyncronously write entry to the USB stick
-            args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["local_storage"]))
+            args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["LocalStorage"]))
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
