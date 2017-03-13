@@ -15,7 +15,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 #################################################################################
 class Event():
     # event priority types
-    @abstractproperty
+    @classmethod
     def EVENT_PRIORITY(self, name):
         priority_types = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
         return priority_types[name]
@@ -24,7 +24,7 @@ class Event():
     def __init__(self, data=None):
         self.data = data
     def __cmp__(self, other):
-        return cmp(self.priority, other.priority)
+        return cmp(self.priority(), other.priority())
 
     # user defined event properties
     def name(self):

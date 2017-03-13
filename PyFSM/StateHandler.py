@@ -29,7 +29,7 @@ class StateHandler(object):
     #       to be passed to the state handler's run method as arguments
     @classmethod
     def args(self):
-        return None
+        return []
 
     # @note USER DEFINED
     # @desc Must accept an args paramater that contains a dictionary of every

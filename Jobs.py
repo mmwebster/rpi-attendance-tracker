@@ -3,11 +3,11 @@
 #################################################################################
 # Import libraries
 #################################################################################
-from PyFSM.Job import Job
-from PyFSM.DropboxStorage import DropboxStorage
 import time
+from PyFSM.Job import Job
 from datetime import datetime
 from os import environ as ENV
+from PyFSM.DropboxStorage import DropboxStorage
 
 #################################################################################
 # Perform initializations
@@ -27,6 +27,9 @@ class AsyncWriteTimeEntryJob(Job):
         Job.__init__(self)
         self.student_id = card_event_data["id"]
         self.localStorage = localStorage
+
+    def run_test(self):
+        print("Writing time entry...")
 
     def run_prod(self):
         name = self.localStorage.read_config_value(str(self.student_id))

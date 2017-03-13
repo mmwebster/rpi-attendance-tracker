@@ -4,10 +4,10 @@
 # Import libraries
 #################################################################################
 # Universal imports
-import threading
 import time
 import math
-from Event import Event
+import Event
+import threading
 from Queue import Queue
 from os import environ as ENV
 
@@ -19,12 +19,12 @@ from os import environ as ENV
 # Class definitions
 #################################################################################
 class EventListener(threading.Thread):
-    def __init__(self, eventQueue):
+    def __init__(self):
         # init the thread
         threading.Thread.__init__(self)
         # run as daemon to kill it when the main thread dies
         self.setDaemon(True)
-        self.eventQueue = eventQueue
+        self.eventQueue = None
 
     # @desc Lifetime of the event listener, overriding Thread's def. Reads in the
     #       ENV var $ATTENDACE_TRACKER_TEST to run in test mode if the system was
@@ -44,28 +44,30 @@ class EventListener(threading.Thread):
     def run_test(self):
         self.run_prod()
 
+    def _set_event_queue(self, eventQueue):
+        self.eventQueue = eventQueue
+
 
 # Posts an init event immediately, then dies
 # Default event Listeners
 class InitEventListener(EventListener):
-    def __init__(self, eventQueue):
-        EventListener.__init__(self, eventQueue)
+    def __init__(self):
+        EventListener.__init__(self)
 
     def run_prod(self):
-        self.eventQueue.put(Event(Event.EVENTS["INIT"]))
+        self.eventQueue.put(Event.InitEvent())
 
+# @desc Period timer that posts a timer event
 class TimerEventListener(EventListener):
-    def __init__(self, eventQueue, period):
-        EventListener.__init__(self, eventQueue)
+    def __init__(self, period):
+        EventListener.__init__(self)
         self.period = period
 
     # lifetime of the event listener
     def run_prod(self):
         while True:
             time.sleep(self.period)
-            self.eventQueue.put(Event(
-                Event.EVENTS["TIMER"], {"period": self.period}
-                ))
+            self.eventQueue.put(Event.TimerEvent({"period": self.period}))
 
 
 #################################################################################

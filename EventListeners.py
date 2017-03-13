@@ -6,9 +6,9 @@
 # Universal imports
 import time
 import math
-from PyFSM.EventListener import EventListener
 import Events
 from os import environ as ENV
+from PyFSM.EventListener import EventListener
 
 # Granular imports
 if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
@@ -37,16 +37,15 @@ VALID_KEY_HASH = {
 #################################################################################
 # Class definitions
 #################################################################################
-class CardReaderEventListener(EventListener):
-    def __init__(self, eventQueue, period, device_name):
-        EventListener.__init__(self, eventQueue)
-        self.period = period
+class CardReadEventListener(EventListener):
+    def __init__(self, device_name):
+        EventListener.__init__(self)
         self.device_name = device_name
 
     def run_test(self):
         while True:
-            time.sleep(3)
-            self.eventQueue.put(Event(Event.EVENTS["CARD_READ"], {"id": 1234567}))
+            time.sleep(10)
+            self.eventQueue.put(Events.CardReadEvent({"id": 1234567}))
 
     def run_prod(self):
         while True:
@@ -83,9 +82,7 @@ class CardReaderEventListener(EventListener):
                                         byte_count += 1
                                         # end of student id
                                         if byte_count == 7:
-                                            self.eventQueue.put(Event(
-                                                Event.EVENTS["CARD_READ"], {"id": student_id}
-                                                ))
+                                            self.eventQueue.put(Event.CardReadEvent({"id": student_id}))
                                             student_id = 0
                                 if event_key_state == KEY_STATE_UP and keycode_str == "KEY_ENTER":
                                     # last byte in card, so reset byte count
@@ -94,7 +91,7 @@ class CardReaderEventListener(EventListener):
                 # error out if unable to find card reader
                 if not discovered_card_reader:
                     print("ERROR: Unable to find the card reader")
-                    time.sleep(period)
+                    time.sleep(1) # delay until next attempt to connect
 
 #################################################################################
 # House keeping..close interfaces and processes

@@ -4,8 +4,8 @@
 # Import libraries
 #################################################################################
 import time
-from os import environ as ENV
 import csv
+from os import environ as ENV
 
 #################################################################################
 # Perform initializations

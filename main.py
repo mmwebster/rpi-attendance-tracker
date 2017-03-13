@@ -6,13 +6,13 @@
 # Import libraries
 #####################################################################################
 import Jobs
-import PyFSM
-from PyFSM.pyFSM import PyFSM
 import Events
 import Services
 import StateHandlers
 import EventListeners
 from os import environ as ENV
+from PyFSM.pyFSM import PyFSM
+from PyFSM import EventListener
 
 #####################################################################################
 # Main logic
@@ -38,35 +38,14 @@ def main():
     # Perform initializations
     #################################################################################
     services = []
-    eventListeners = [PyFSM.EventListener.TimerEventListener()]
-    stateHandlers = [StateHandlers.InitStateHandler]
-    enabledLibs = []
-
-    # init and declare FSM properties
-    # events = {"INIT": 1, "TIMER": 2, "HIGH": 3, "MEDIUM": 4, "LOW": 5}
-    # stateHandlers = {
-    #                     "INIT": FSMStateHandlers.InitState
-    #                  }
-    #
-    # # TODO: create all event listeners (subclasses from Service)
-    # services = [
-    #                 Services.Timer(5.0),
-    #                 Services.CardReader(2, "my-device"),
-    #                 Services.AsyncPeriodicSyncWithDropbox(20,
-    #                     ["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])
-    #            ]
-    #
-    # enabledLibs = [
-    #         {
-    #             "name": "LocalStorage",
-    #             "path": ENV["AT_LOCAL_STORAGE_PATH"]
-    #         },
-    #         {
-    #             "name": "DropboxStorage",
-    #             "token": ENV["AT_DROPBOX_AUTH_TOKEN"],
-    #             "path": ENV["AT_LOCAL_STORAGE_PATH"]
-    #         }
-    #        ]
+    # services = [Services.AsyncPeriodicSyncWithDropbox(20,["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])]
+    eventListeners = [ EventListener.TimerEventListener(5.0),
+                       EventListeners.CardReadEventListener("MY_CARD_READER") ]
+    stateHandlers = [ StateHandlers.InitStateHandler,
+                      StateHandlers.TempStateHandler ]
+    enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]) ]
+    # enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]),
+    #         DropboxStorage(ENV["AT_DROPBOX_AUTH_TOKEN"], ENV["AT_LOCAL_STORAGE_PATH"])]
 
     #################################################################################
     # Begin the main FSM runloop

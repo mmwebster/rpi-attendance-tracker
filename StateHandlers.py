@@ -3,6 +3,8 @@
 #################################################################################
 # Import libraries
 #################################################################################
+import Jobs
+import time
 from PyFSM.StateHandler import StateHandler
 from abc import abstractmethod, abstractproperty, ABCMeta
 
@@ -18,48 +20,47 @@ class InitStateHandler(StateHandler):
         return "INIT"
 
     @classmethod
-    def args(self):
-        return [ "LocalStorage", "DropboxStorage"]
-
-    @classmethod
     def run(self, args):
-        print("Init function processing event: " + str(args["event"].name()))
+        print("INIT SH processing event: " + str(args["event"].name()) + "->" + str(args["event"].data))
         if (args["event"].name() == "ENTRY"):
             # entering INIT state
             return { "did_error": False }
         elif (args["event"].name() == "INIT"):
             # processing INIT event
-            return { "next_state": "MY_SECOND_STATE", "did_error": False }
+            return { "next_state": "TEMP", "did_error": False }
+        elif (args["event"].name() == "TIMER"):
+            # processing INIT event
+            return { "next_state": "INIT", "did_error": False }
+        elif (args["event"].name() == "EXIT"):
+            # exiting INIT state
+            return { "did_error": False }
+        else:
+            return { "next_state": "INIT", "did_error": False }
+
+class TempStateHandler(StateHandler):
+    @classmethod
+    def name(self):
+        return "TEMP"
+
+    @classmethod
+    def args(self):
+        return [ "LocalStorage", "DropboxStorage" ]
+
+    @classmethod
+    def run(self, args):
+        print("TEMP SH processing event: " + str(args["event"].name()) + "->" + str(args["event"].data))
+        if (args["event"].name() == "ENTRY"):
+            # entering TEMP state
+            return { "did_error": False }
+        elif (args["event"].name() == "TIMER"):
+            # processing TEMP event
+            return { "next_state": "TEMP", "did_error": False}
+        elif (args["event"].name() == "CARD_READ"):
+            # asyncronously write entry to the USB stick
+            args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["local_storage"]))
+            return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
             return { "did_error": False }
         else:
             return { "did_error": True, "error_message": "Invalid event" }
-
-#
-# def startupState(event, localStorage):
-#     print("FSM: TMP_STATE[{0},{1}]".format(event.name, str(event.data)))
-#     if (event.name == "INIT"):
-#         return { "next_state": "TMP", "did_error": False }
-#     elif (event.name == "ENTRY"):
-#         return { "did_error": False }
-#     elif (event.name == "EXIT"):
-#         return { "did_error": False }
-#     else:
-#         print("ERROR: event has no event handler")
-
-# def tempState(event, localStorage):
-#     print("FSM: TMP_STATE[{0},{1}]".format(event.name, str(event.data)))
-#     if (event.name == "TIMER"):
-#         return { "next_state": "TMP", "did_error": False}
-#     elif (event.name == "CARD_READ"):
-#         # asyncronously write entry to the USB stick
-#         Jobs.queue(Jobs.AsyncWriteTimeEntry(event.data, localStorage))
-#         # print("FSM: TMP_STATE[{0},{1}]".format(event.name, event.data["id"]))
-#         return { "next_state": "TMP", "did_error": False }
-#     elif (event.name == "ENTRY"):
-#         return { "did_error": False }
-#     elif (event.name == "EXIT"):
-#         return { "did_error": False }
-#     else:
-#         return {"did_error": True, "error_message": "Event has no event handler in tempState"}

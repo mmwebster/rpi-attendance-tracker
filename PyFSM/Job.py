@@ -3,11 +3,11 @@
 #################################################################################
 # Import libraries
 #################################################################################
-import threading
 import time
-from DropboxStorage import DropboxStorage
+import threading
 from datetime import datetime
 from os import environ as ENV
+from DropboxStorage import DropboxStorage
 
 #################################################################################
 # Perform initializations
@@ -20,8 +20,8 @@ from os import environ as ENV
 # @note Currently does not operate with a queue, just start the job immediately
 #       don't yet know if there would be any benefit to only allowing 1 job to
 #       run at a time
-def queue(job):
-    job.start()
+# def queue(job):
+#     job.start()
 
 #################################################################################
 # Class definitions
@@ -39,7 +39,7 @@ class Job(threading.Thread):
         threading.Thread.__init__(self)
         # do not run as daemon to ensure that main thread waits until this thread
         # finishes before dieing
-        self.setDaemon(False) # default, main thread must wait for completion
+        self.setDaemon(True) # default, main thread must wait for completion
 
     # @desc Lifetime of the event listener, overriding Thread's def. Reads in the
     #       ENV var $ATTENDACE_TRACKER_TEST to run in test mode if the system was
