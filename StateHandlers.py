@@ -29,7 +29,7 @@ class InitStateHandler(StateHandler):
             return { "did_error": False }
         elif (args["event"].name() == "INIT"):
             # processing INIT event
-            # change LED indicator
+            # indicate startup
             args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[1])
             time.sleep(2)
             return { "next_state": "TEMP", "did_error": False }
@@ -38,7 +38,6 @@ class InitStateHandler(StateHandler):
             return { "next_state": "INIT", "did_error": False }
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
-            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[6])
             return { "did_error": False }
         else:
             return { "next_state": "INIT", "did_error": False }
@@ -58,6 +57,8 @@ class TempStateHandler(StateHandler):
         print("TEMP SH processing event: " + str(args["event"].name()) + "->" + str(args["event"].data))
         if (args["event"].name() == "ENTRY"):
             # entering TEMP state
+            # indicate system ready
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[0])
             return { "did_error": False }
         elif (args["event"].name() == "TIMER"):
             # processing TEMP event
