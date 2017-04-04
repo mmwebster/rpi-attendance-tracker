@@ -82,7 +82,7 @@ class CardReadEventListener(EventListener):
                                         byte_count += 1
                                         # end of student id
                                         if byte_count == 7:
-                                            self.eventQueue.put(Event.CardReadEvent({"id": student_id}))
+                                            self.eventQueue.put(Events.CardReadEvent({"id": student_id}))
                                             student_id = 0
                                 if event_key_state == KEY_STATE_UP and keycode_str == "KEY_ENTER":
                                     # last byte in card, so reset byte count
