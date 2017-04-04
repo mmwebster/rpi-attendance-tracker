@@ -203,7 +203,7 @@ class PiezoService(Service):
             else:
                 print("Piezo: Turning on Piezo with beeps == " + str(self.current_beeps))
             # wait .1 until transitioning to off
-            sleep(.2)
+            sleep(.3)
             next_state = "off"
 
         elif current_state == "off":
@@ -222,11 +222,11 @@ class PiezoService(Service):
                 # beep'd enough, go to sleep until next beep request
                 self.fsm_iterator = 0
                 next_state = None
-            sleep(.2) # always wait .1 incase beep requests are spammed
+            sleep(.3) # always wait .1 incase beep requests are spammed
 
         else:
             print("Piezo: ERROR: Invalid state passed as current_state ->" + str(current_state))
-            sleep(.2)
+            sleep(.3)
 
         return next_state
 
