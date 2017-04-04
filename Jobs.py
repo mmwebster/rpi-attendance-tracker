@@ -8,6 +8,7 @@ from pyfsm.Job import Job
 from datetime import datetime
 from os import environ as ENV
 from pyfsm.DropboxStorage import DropboxStorage
+from LEDIndicator import LEDIndicator
 
 #################################################################################
 # Perform initializations
@@ -82,6 +83,18 @@ class AsyncPeriodicSyncWithDropboxJob(Job):
             # sync all of self.files
             for file_name in self.file_names:
                 dbx.upload(file_name)
+
+# class AsyncChangeLEDIndicatorJob(Job):
+#     def __init__(self, error_code, error_param, LEDQueue):
+#         Job.__init__(self)
+#         self.error_code = error_code
+#         self.error_param = error_param
+#
+#     def run_prod(self):
+#         
+#         if self.error_code
+#             # TODO: .. FINISH implementation to change state (push to queue)
+
 
 #################################################################################
 # House keeping..close interfaces and processes

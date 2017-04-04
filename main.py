@@ -13,6 +13,7 @@ import EventListeners
 from os import environ as ENV
 from pyfsm.Pyfsm import Pyfsm
 from pyfsm import EventListener
+from Queue import PriorityQueue
 from pyfsm.LocalStorage import LocalStorage
 from pyfsm.DropboxStorage import DropboxStorage
 
@@ -39,20 +40,24 @@ def main():
     #################################################################################
     # Perform initializations
     #################################################################################
-    services = []
+    LEDQueue = PriorityQueue() # thread-safe queue
+    services = [ Services.LEDIndicatorService(LEDQueue) ]
     # services = [Services.AsyncPeriodicSyncWithDropbox(20,["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])]
     eventListeners = [ EventListener.TimerEventListener(5.0),
                        EventListeners.CardReadEventListener("MY_CARD_READER") ]
     stateHandlers = [ StateHandlers.InitStateHandler,
                       StateHandlers.TempStateHandler ]
     enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]) ]
+    # common params are passed to every state handler
+    commonArgs = { "LEDQueue": LEDQueue }
+
     # enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]),
     #         DropboxStorage(ENV["AT_DROPBOX_AUTH_TOKEN"], ENV["AT_LOCAL_STORAGE_PATH"])]
 
     #################################################################################
     # Begin the main FSM runloop
     #################################################################################
-    pyfsm = Pyfsm(services, eventListeners, stateHandlers, enabledLibs)
+    pyfsm = Pyfsm(services, eventListeners, stateHandlers, enabledLibs, commonArgs)
     error_message = pyfsm.start()
 
     # error'd out..print the message

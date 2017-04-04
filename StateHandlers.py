@@ -5,6 +5,8 @@
 #################################################################################
 import Jobs
 import time
+from os import environ as ENV
+from LEDIndicator import LEDIndicator
 from pyfsm.StateHandler import StateHandler
 from abc import abstractmethod, abstractproperty, ABCMeta
 
@@ -27,12 +29,16 @@ class InitStateHandler(StateHandler):
             return { "did_error": False }
         elif (args["event"].name() == "INIT"):
             # processing INIT event
+            # change LED indicator
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[1])
+            time.sleep(2)
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "TIMER"):
             # processing INIT event
             return { "next_state": "INIT", "did_error": False }
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[6])
             return { "did_error": False }
         else:
             return { "next_state": "INIT", "did_error": False }
