@@ -15,7 +15,7 @@
 # @note The LED state does not correspond to the FSM state, LED indicator states
 #       are listed in Jobs.py
 class Piezo(object):
-    PIEZO_PIN = 3
+    PIEZO_PIN = 25
     BEEP_TYPES = [
             {"beeps": 1},
             {"beeps": 3}
