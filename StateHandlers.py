@@ -62,10 +62,8 @@ class TempStateHandler(StateHandler):
             return { "did_error": False }
         elif (args["event"].name() == "TIMER"):
             # processing TEMP event
-            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[2])
             return { "next_state": "TEMP", "did_error": False}
         elif (args["event"].name() == "CARD_READ"):
-            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[3])
             # asyncronously write entry to the USB stick
             args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["LocalStorage"]))
             return { "next_state": "TEMP", "did_error": False }
