@@ -97,8 +97,6 @@ class LEDIndicatorService(Service):
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 GPIO.output(self.current_color_pin, GPIO.LOW)
-            else:
-                print("LEDIndicator: Turning an LED on, with LED_TYPE == " + str(self.current_blinks))
             if self.current_blinks == 0:
                 # always stay ON if blinks == 0
                 next_state = "on"
@@ -111,8 +109,6 @@ class LEDIndicatorService(Service):
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 GPIO.output(self.current_color_pin, GPIO.HIGH)
-            else:
-                print("LEDIndicator: Turning an LED off")
             if self.fsm_iterator < self.current_blinks:
                 next_state = "on"
             elif self.current_blinks == 1:

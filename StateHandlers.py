@@ -66,7 +66,7 @@ class TempStateHandler(StateHandler):
             return { "next_state": "TEMP", "did_error": False}
         elif (args["event"].name() == "CARD_READ"):
             # beep the piezo
-            args["common_args"]["PiezoQueue"].put(Piezo.BEEP_TYPES[0])
+            args["common_args"]["PiezoQueue"].put(Piezo.BEEP_TYPES[1])
             # asyncronously write entry to the USB stick
             args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["LocalStorage"]))
             return { "next_state": "TEMP", "did_error": False }
