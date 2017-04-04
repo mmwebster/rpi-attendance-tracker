@@ -80,7 +80,7 @@ class LEDIndicatorService(Service):
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 for colorPin in [LEDIndicator.RED, LEDIndicator.GREEN, LEDIndicator.BLUE]:
-                    GPIO.output(self.current_color_pin, GPIO.HIGH)
+                    GPIO.output(colorPin, GPIO.HIGH)
             else:
                 print("LEDIndicator: Turning all LEDs off")
             # transition to off state
