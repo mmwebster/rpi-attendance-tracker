@@ -76,11 +76,11 @@ class LEDIndicatorService(Service):
         # service function of current state and return next state
         if current_state == "init":
             self.fsm_iterator = 0
-            # set all LEDs to LOW
+            # set all LEDs to HIGH
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 for colorPin in [LEDIndicator.RED, LEDIndicator.GREEN, LEDIndicator.BLUE]:
-                    GPIO.output(self.current_color_pin, GPIO.LOW)
+                    GPIO.output(self.current_color_pin, GPIO.HIGH)
             else:
                 print("LEDIndicator: Turning all LEDs off")
             # transition to off state
@@ -95,7 +95,7 @@ class LEDIndicatorService(Service):
         elif current_state == "on":
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
-                GPIO.output(self.current_color_pin, GPIO.HIGH)
+                GPIO.output(self.current_color_pin, GPIO.LOW)
             else:
                 print("LEDIndicator: Turning an LED on, with LED_TYPE == " + str(self.current_blinks))
             if self.current_blinks == 0:
@@ -109,7 +109,7 @@ class LEDIndicatorService(Service):
             self.fsm_iterator += 1
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
-                GPIO.output(self.current_color_pin, GPIO.LOW)
+                GPIO.output(self.current_color_pin, GPIO.HIGH)
             else:
                 print("LEDIndicator: Turning an LED off")
             if self.fsm_iterator < self.current_blinks:
