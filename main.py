@@ -47,11 +47,12 @@ def main():
                        EventListeners.CardReadEventListener("MY_CARD_READER") ]
     stateHandlers = [ StateHandlers.InitStateHandler,
                       StateHandlers.TempStateHandler ]
-    if 'ATTENDANCE_TRACKER_TEST' in ENV or int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
-        enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]) ]
-    else:
+    if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+            not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
         # TODO: get this path from the config.csv instead, modify LocalStorage
         #       class so that it defaults to what's in config.csv if there's no param
+        enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]) ]
+    else:
         enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]) ]
     # common params are passed to every state handler
     commonArgs = { "LEDQueue": LEDQueue }
