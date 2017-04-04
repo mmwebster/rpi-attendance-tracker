@@ -159,10 +159,12 @@ class PiezoService(Service):
             if not self.PiezoQueue.empty():
                 beep_type = self.PiezoQueue.get(False) # non-blocking
                 self.current_beeps = beep_type["beeps"]
+                print("Piezo: checking for new type")
                 current_state = "init"
 
             # if the Piezo has never received a beep type, block until it does
             if beep_type == None:
+                print("Piezo: Blocking Piezo thread until receiving the first type")
                 beep_type = self.PiezoQueue.get(True) # blocking
                 self.current_beeps = beep_type["beeps"]
                 current_state = "init"
@@ -170,6 +172,7 @@ class PiezoService(Service):
             # execute next iteration of Piezo state
             next_state = self.run_state(current_state)
             if next_state == None:
+                print("Piezo: Done with beep")
                 # stopping beeping if FSM returned None (indicating it's done)
                 beep_type = None
             else:
@@ -186,6 +189,7 @@ class PiezoService(Service):
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 GPIO.output(Piezo.PIEZO_PIN, GPIO.LOW)
+                print("Piezo: In INIT state")
             else:
                 print("Turning off Piezo buzzer")
             # transition to off state
@@ -195,6 +199,7 @@ class PiezoService(Service):
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 GPIO.output(Piezo.PIEZO_PIN, GPIO.HIGH)
+                print("Piezo: In ON state")
             else:
                 print("Piezo: Turning on Piezo with beeps == " + str(self.current_beeps))
             # wait .1 until transitioning to off
@@ -206,6 +211,7 @@ class PiezoService(Service):
             self.fsm_iterator += 1
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                print("Piezo: In OFF state")
                 GPIO.output(Piezo.PIEZO_PIN, GPIO.LOW)
             else:
                 print("Piezo: Turning the Piezo off")
