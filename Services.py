@@ -87,7 +87,8 @@ class LEDIndicatorService(Service):
             next_state = "on"
         elif current_state == "waiting":
             # 1s between .5s blinks where blink number is greater than 1
-            if 'ATTENDANCE_TRACKER_TEST' in ENV or int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+            if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                    not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 print("LEDIndicator: Waiting...")
             sleep(1)
             next_state = "on"
