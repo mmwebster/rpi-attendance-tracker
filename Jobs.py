@@ -30,7 +30,8 @@ class AsyncWriteTimeEntryJob(Job):
         self.localStorage = localStorage
 
     def run_test(self):
-        print("Writing time entry...")
+        # print("Writing time entry...")
+        self.run_prod()
 
     def run_prod(self):
         name = self.localStorage.read_config_value(str(self.student_id))
