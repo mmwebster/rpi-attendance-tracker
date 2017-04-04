@@ -17,7 +17,7 @@
 class Piezo(object):
     PIEZO_PIN = 3
     BEEP_TYPES = [
-            {"beeps": 1}
+            {"beeps": 1},
             {"beeps": 3}
             ]
 

@@ -7,6 +7,7 @@ import Jobs
 import time
 from os import environ as ENV
 from LEDIndicator import LEDIndicator
+from Piezo import Piezo
 from pyfsm.StateHandler import StateHandler
 from abc import abstractmethod, abstractproperty, ABCMeta
 

@@ -132,8 +132,10 @@ class LEDIndicatorService(Service):
 
     # close all used GPIO ports
     def __del__(self):
-        print("LEDIndicator: Cleaning up GPIO")
-        GPIO.cleanup()
+        if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+            print("LEDIndicator: Cleaning up GPIO")
+            GPIO.cleanup()
 
 class PiezoService(Service):
     def __init__(self, PiezoQueue):
@@ -157,7 +159,7 @@ class PiezoService(Service):
         while True:
             # TODO: remove redunancies in the following two blocks
             # reset with new vals if a new Piezo buzzer state is requested
-            if not self.BeepQueue.empty():
+            if not self.PiezoQueue.empty():
                 beep_type = self.PiezoQueue.get(False) # non-blocking
                 self.current_beeps = beep_type["beeps"]
                 current_state = "init"
@@ -173,7 +175,7 @@ class PiezoService(Service):
 
             # execute next iteration of Piezo state
             next_state = self.run_state(current_state)
-            if current_state == None
+            if next_state == None:
                 # stopping beeping if FSM returned None (indicating it's done)
                 beep_type = None
             else:
@@ -230,8 +232,10 @@ class PiezoService(Service):
 
     # close all used GPIO ports
     def __del__(self):
-        print("Piezo: Cleaning up GPIO")
-        GPIO.cleanup()
+        if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+            print("Piezo: Cleaning up GPIO")
+            GPIO.cleanup()
 
 
 #################################################################################
