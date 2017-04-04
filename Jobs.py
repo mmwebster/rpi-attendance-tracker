@@ -34,7 +34,7 @@ class AsyncWriteTimeEntryJob(Job):
         self.run_prod()
 
     def run_prod(self):
-        name = self.localStorage.read_config_value(str(self.student_id))
+        name = self.localStorage.lookup_id(str(self.student_id))
         epoch = time.time()
         timestamp = datetime.fromtimestamp(epoch).strftime('%Y-%m-%d %H:%M:%S')
 
