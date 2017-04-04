@@ -41,7 +41,8 @@ def main():
     # Perform initializations
     #################################################################################
     LEDQueue = PriorityQueue() # thread-safe queue
-    services = [ Services.LEDIndicatorService(LEDQueue) ]
+    PiezoQueue = PriorityQueue() # thread-safe queue
+    services = [ Services.LEDIndicatorService(LEDQueue), Services.PiezoService(PiezoQueue) ]
     # services = [Services.AsyncPeriodicSyncWithDropbox(20,["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])]
     eventListeners = [ EventListener.TimerEventListener(5.0),
                        EventListeners.CardReadEventListener("MY_CARD_READER") ]
@@ -55,7 +56,7 @@ def main():
     else:
         enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]) ]
     # common params are passed to every state handler
-    commonArgs = { "LEDQueue": LEDQueue }
+    commonArgs = { "LEDQueue": LEDQueue, "PiezoQueue": PiezoQueue }
 
     # enabledLibs = [ LocalStorage(ENV["AT_LOCAL_STORAGE_PATH"]),
     #         DropboxStorage(ENV["AT_DROPBOX_AUTH_TOKEN"], ENV["AT_LOCAL_STORAGE_PATH"])]

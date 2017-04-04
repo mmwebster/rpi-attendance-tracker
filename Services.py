@@ -10,6 +10,7 @@ if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
     import RPi.GPIO as GPIO
 from pyfsm.Service import Service
 from LEDIndicator import LEDIndicator
+from Piezo import Piezo
 
 #################################################################################
 # Perform initializations
@@ -133,6 +134,105 @@ class LEDIndicatorService(Service):
     def __del__(self):
         print("LEDIndicator: Cleaning up GPIO")
         GPIO.cleanup()
+
+class PiezoService(Service):
+    def __init__(self, PiezoQueue):
+        Service.__init__(self)
+        # self.concurrency_limit = concurrency_limit
+        # thread-safe queue
+        self.PiezoQueue = PiezoQueue
+        self.current_beeps = 0 # default to zero beeps
+        self.fsm_iterator = 0
+        # intialize pins
+        if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+            GPIO.setwarnings(False) # ignore channel-open warnings
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(Piezo.PIEZO_PIN, GPIO.OUT)
+
+    # lifetime of the event listener
+    def run_prod(self):
+        current_state = "init"
+        beep_type = None
+        while True:
+            # TODO: remove redunancies in the following two blocks
+            # reset with new vals if a new Piezo buzzer state is requested
+            if not self.BeepQueue.empty():
+                beep_type = self.PiezoQueue.get(False) # non-blocking
+                self.current_beeps = beep_type["beeps"]
+                current_state = "init"
+
+            # if the Piezo has never received a beep type, block until it does
+            if beep_type == None:
+                if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                        not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                    print("Piezo: Blocking Piezo thread until receiving the first type")
+                beep_type = self.PiezoQueue.get(True) # blocking
+                self.current_beeps = beep_type["beeps"]
+                current_state = "init"
+
+            # execute next iteration of Piezo state
+            next_state = self.run_state(current_state)
+            if current_state == None
+                # stopping beeping if FSM returned None (indicating it's done)
+                beep_type = None
+            else:
+                # continue running FSM otherwise
+                current_state = next_state
+
+    def run_state(self, current_state):
+        # init next state
+        next_state = None
+        # service function of current state and return next state
+        if current_state == "init":
+            self.fsm_iterator = 0
+            # turn off Piezo
+            if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                    not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                GPIO.output(Piezo.PIEZO_PIN, GPIO.LOW)
+            else:
+                print("Turning off Piezo buzzer")
+            # transition to off state
+            next_state = "on"
+
+        elif current_state == "on":
+            if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                    not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                GPIO.output(Piezo.PIEZO_PIN, GPIO.HIGH)
+            else:
+                print("Piezo: Turning on Piezo with beeps == " + str(self.current_beeps))
+            # wait .3 until transitioning to off
+            sleep(.3)
+            next_state = "off"
+
+        elif current_state == "off":
+            # inc iterator
+            self.fsm_iterator += 1
+            if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                    not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                GPIO.output(Piezo.PIEZO_PIN, GPIO.LOW)
+            else:
+                print("Piezo: Turning the Piezo off")
+
+            if self.fsm_iterator < self.current_beeps:
+                next_state = "on"
+            else:
+                # beep'd enough, go to sleep until next beep request
+                self.fsm_iterator = 0
+                next_state = None
+            sleep(.3) # always wait .3 incase beep requests are spammed
+
+        else:
+            print("Piezo: ERROR: Invalid state passed as current_state ->" + str(current_state))
+            sleep(.3)
+
+        return next_state
+
+    # close all used GPIO ports
+    def __del__(self):
+        print("Piezo: Cleaning up GPIO")
+        GPIO.cleanup()
+
 
 #################################################################################
 # House keeping..close interfaces and processes
