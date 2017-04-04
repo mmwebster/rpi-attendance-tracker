@@ -37,6 +37,7 @@ class LEDIndicatorService(Service):
         # intialize pins
         if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                 not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+            GPIO.setwarnings(False) # ignore channel-open warnings
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(LEDIndicator.RLED_PIN, GPIO.OUT)
             GPIO.setup(LEDIndicator.GLED_PIN, GPIO.OUT)
@@ -57,7 +58,8 @@ class LEDIndicatorService(Service):
 
             # if the LED Indicator has never received a type, block until it does
             if led_type == None:
-                if 'ATTENDANCE_TRACKER_TEST' in ENV or int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                        not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                     print("LEDIndicator: Blocking LED Indicator thread until receiving the first type")
                 led_type = self.LEDQueue.get(True)
                 self.current_color_pin = led_type["color"]
@@ -126,9 +128,9 @@ class LEDIndicatorService(Service):
 
         return next_state
 
-
-
-
+    # close all used GPIO ports
+    def __del__(self):
+        GPIO.cleanup()
 
 #################################################################################
 # House keeping..close interfaces and processes
