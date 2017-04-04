@@ -131,6 +131,7 @@ class LEDIndicatorService(Service):
 
     # close all used GPIO ports
     def __del__(self):
+        print("LEDIndicator: Cleaning up GPIO")
         GPIO.cleanup()
 
 #################################################################################
