@@ -38,7 +38,8 @@ class LEDIndicator(object):
             "message": "Unable to connect to the network; make sure that Wifi is configured properly or that Ethernet is supplied"},
         {"color": RED, "blinks": 6,
             "message": "Generic value error (check the logs in errors.csv for the exact key that was misconfig- ured)"},
-        {"color": RED, "blinks": 7, "message": "Unable to authenticate with Dropbox; the provided access token was invalid"}
+        {"color": RED, "blinks": 7, "message": "Unable to authenticate with Dropbox; the provided access token was invalid"},
+        {"color": GREEN, "blinks": 2, "message": "The system is starting up and not yet ready for a card swipe."}
         ]
 
     # just a tool for readability

@@ -88,9 +88,12 @@ class TempStateHandler(StateHandler):
             return { "next_state": "TEMP", "did_error": False}
         elif (args["event"].name() == "CARD_READ"):
             # beep the piezo
-            args["common_args"]["PiezoQueue"].put(Piezo.BEEP_TYPES[1])
+            # args["common_args"]["PiezoQueue"].put(Piezo.BEEP_TYPES[1])
+            # flash the led (b/c can't get piezo working)
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[15])
             # asyncronously write entry to the USB stick
             args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["LocalStorage"]))
+            sleep(1) # block until done blinking (artificial processing time)
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
