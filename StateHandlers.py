@@ -29,6 +29,11 @@ class InitStateHandler(StateHandler):
         return "INIT"
 
     @classmethod
+    def args(self):
+        # return [ "LocalStorage", "DropboxStorage" ]
+        return [ "LocalStorage" ]
+
+    @classmethod
     def run(self, args):
         print("INIT SH processing event: " + str(args["event"].name()) + "->" + str(args["event"].data))
         if (args["event"].name() == "ENTRY"):
