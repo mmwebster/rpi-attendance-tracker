@@ -10,11 +10,12 @@ import Events
 from os import environ as ENV
 from pyfsm.EventListener import EventListener
 
-# Granular imports
+# imports for when not in test mode
 if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
    not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
     # Prod mode imports
     import evdev # lib for keyboard input event detection
+    import RPi.GPIO as GPIO
 
 #################################################################################
 # Perform initializations
