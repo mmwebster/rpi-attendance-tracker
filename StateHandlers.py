@@ -54,18 +54,18 @@ class InitStateHandler(StateHandler):
                 except:
                     # not already connect to a network, try to connect
                     # connect to the wifi if no current connection
-                    try:
+                    #try:
                     ret_val = connect_to_wifi(
-                                args["LocalStorage"].read_config_value('wifi-ssid'),
-                                args["LocalStorage"].read_config_value('wifi-password')
-                                )
+                            args["LocalStorage"].read_config_value('wifi-ssid'),
+                            args["LocalStorage"].read_config_value('wifi-password')
+                            )
                     if ret_val == False:
                         print("Specified network is out of range")
                     else:
                         print("Something else went wrong...")
-                    #except:
+                    #except Exception as e:
                     #    # either the network is out
-                    #    print("Specified network password is invalid or another error has occured")
+                    #    print("Specified network password is invalid or another error has occured: " + str(e.message) + ", " + str(e.args))
             time.sleep(2)
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "TIMER"):
@@ -116,6 +116,7 @@ class TempStateHandler(StateHandler):
 def connect_to_wifi(configured_ssid, configured_password):
     # find all available networks
     networks = wifi.Cell.all('wlan0')
+    print("searching for " + str(configured_ssid) + "," + str(configured_password) + " out of " + str(networks))
     # determine if any ssids match that specified in the config file
     for network in networks:
         if network.ssid == configured_ssid:
