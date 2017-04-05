@@ -115,10 +115,11 @@ class ShutdownEventListener(EventListener):
     def run_prod(self):
         while True:
             # poll for actuation of button every 10th of a second
-            if GPIO.input(self.shutdown_pin):
+            # note that shutdown button is active-low
+            if not GPIO.input(self.shutdown_pin):
                 # shutdown pressed, debounce once for simplicity
                 time.sleep(.1)
-                if GPIO.input(self.shutdown_pin):
+                if not GPIO.input(self.shutdown_pin):
                     # shutdown pressed for at least .1s, post the event
                     # note that this is very poor debouncing
                     self.eventQueue.put(Events.ShutdownEvent())
