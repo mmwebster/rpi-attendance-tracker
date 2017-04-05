@@ -36,7 +36,7 @@ class AsyncWriteTimeEntryJob(Job):
 
     def run_prod(self):
         name = self.localStorage.lookup_id(str(self.student_id))
-        if name == None:
+        if name == "NOT_FOUND":
             # flash red b/c user not in system
             self.ledQueue.put(LEDIndicator.LED_TYPES[4])
         else:
