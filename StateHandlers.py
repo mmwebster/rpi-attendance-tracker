@@ -91,7 +91,10 @@ class TempStateHandler(StateHandler):
             # args["common_args"]["PiezoQueue"].put(Piezo.BEEP_TYPES[1])
             # flashing the led in job (b/c can't get piezo working)
             # asyncronously write entry to the USB stick
-            args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["LocalStorage"]))
+            args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(
+                args["event"].data,
+                args["LocalStorage"]),
+                args["common_args"]["LEDQueue"])
             time.sleep(1) # block until done blinking (artificial processing time)
             args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[0])
             return { "next_state": "TEMP", "did_error": False }

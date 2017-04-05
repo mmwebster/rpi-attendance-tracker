@@ -24,10 +24,11 @@ from LEDIndicator import LEDIndicator
 #       shared csv data is not corrupted. Can also lock objects, but easiest way is to
 #       implement job queue allowing only one job to run at a time
 class AsyncWriteTimeEntryJob(Job):
-    def __init__(self, card_event_data, localStorage):
+    def __init__(self, card_event_data, localStorage, ledQueue):
         Job.__init__(self)
         self.student_id = card_event_data["id"]
         self.localStorage = localStorage
+        self.ledQueue = ledQueue
 
     def run_test(self):
         # print("Writing time entry...")
@@ -37,10 +38,10 @@ class AsyncWriteTimeEntryJob(Job):
         name = self.localStorage.lookup_id(str(self.student_id))
         if name == None:
             # flash red b/c user not in system
-            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[4])
+            self.ledQueue.put(LEDIndicator.LED_TYPES[4])
         else:
             # flash green b/c user is in system
-            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[10])
+            self.ledQueue.put(LEDIndicator.LED_TYPES[10])
         epoch = time.time()
         timestamp = datetime.fromtimestamp(epoch).strftime('%Y-%m-%d %H:%M:%S')
 
