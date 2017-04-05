@@ -18,6 +18,12 @@ class CardReadEvent(Event):
     def priority(self):
         return Event.EVENT_PRIORITY("MEDIUM")
 
+class ShutdownEvent(Event):
+    def name(self):
+        return "SHUTDOWN"
+    def priority(self):
+        return Event.EVENT_PRIORITY("MEDIUM")
+
 #################################################################################
 # House keeping..close interfaces and processes
 #################################################################################

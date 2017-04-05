@@ -93,6 +93,36 @@ class CardReadEventListener(EventListener):
                     print("ERROR: Unable to find the card reader")
                     time.sleep(1) # delay until next attempt to connect
 
+# TODO: make this use interrupts
+# TODO: implement proper debouncing
+class ShutdownEventListener(EventListener):
+    def __init__(self):
+        EventListener.__init__(self)
+        self.shutdown_pin = 4
+        # intialize pins
+        if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+            GPIO.setwarnings(False) # ignore channel-open warnings
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self.shutdown_pin, GPIO.IN)
+
+    def run_test(self):
+        while True:
+            time.sleep(30)
+            self.eventQueue.put(Events.ShutdownEvent())
+
+    def run_prod(self):
+        while True:
+            # poll for actuation of button every 10th of a second
+            if GPIO.input(self.shutdown_pin):
+                # shutdown pressed, debounce once for simplicity
+                sleep(.1)
+                if GPIO.input(self.shutdown_pin):
+                    # shutdown pressed for at least .1s, post the event
+                    # note that this is very poor debouncing
+                    self.eventQueue.put(Events.ShutdownEvent())
+            sleep(.1)
+
 #################################################################################
 # House keeping..close interfaces and processes
 #################################################################################

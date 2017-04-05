@@ -3,6 +3,7 @@
 #################################################################################
 # Import libraries
 #################################################################################
+import os
 import Jobs
 import time
 import urllib
@@ -53,8 +54,8 @@ class InitStateHandler(StateHandler):
                 except:
                     # not already connect to a network, indicate such
                     print("ERROR: Not connected to a network")
-                    args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[7])
-            time.sleep(2)
+                    args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[11])
+            time.sleep(.9)
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "TIMER"):
             # processing INIT event
@@ -98,6 +99,10 @@ class TempStateHandler(StateHandler):
             time.sleep(1) # block until done blinking (artificial processing time)
             args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[0])
             return { "next_state": "TEMP", "did_error": False }
+        elif (args["event"].name() == "SHUTDOWN"):
+            # received a shutdown event, close all interfaces and run sudo shutdown -h now
+            # TODO: properly close interfaces just to be on the safe side
+            os.system("sudo shutdown now") # note that this requires script to be started with sudo privileges
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
             return { "did_error": False }
