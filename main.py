@@ -45,8 +45,8 @@ def main():
     services = [ Services.LEDIndicatorService(LEDQueue), Services.PiezoService(PiezoQueue) ]
     # services = [Services.AsyncPeriodicSyncWithDropbox(20,["time_in_entries.csv", "time_out_entries.csv", "time_entries.csv"])]
     eventListeners = [ EventListener.TimerEventListener(5.0),
-                       EventListeners.CardReadEventListener("MY_CARD_READER"),
-                       EventListeners.ShutdownEventListener() ]
+                       EventListeners.CardReadEventListener("MY_CARD_READER") ]
+                       # EventListeners.ShutdownEventListener() ]
     stateHandlers = [ StateHandlers.InitStateHandler,
                       StateHandlers.TempStateHandler ]
     enabledLibs = [ LocalStorage() ]

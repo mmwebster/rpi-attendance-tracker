@@ -102,6 +102,8 @@ class TempStateHandler(StateHandler):
         elif (args["event"].name() == "SHUTDOWN"):
             # received a shutdown event, close all interfaces and run sudo shutdown -h now
             # TODO: properly close interfaces just to be on the safe side
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[11])
+            sleep(.9) # allow it to blink, blocking okay cause shutting down
             os.system("sudo shutdown now") # note that this requires script to be started with sudo privileges
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
