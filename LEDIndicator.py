@@ -39,7 +39,7 @@ class LEDIndicator(object):
         {"color": RED, "blinks": 6,
             "message": "Generic value error (check the logs in errors.csv for the exact key that was misconfig- ured)"},
         {"color": RED, "blinks": 7, "message": "Unable to authenticate with Dropbox; the provided access token was invalid"},
-        {"color": GREEN, "blinks": 2, "message": "The system is starting up and not yet ready for a card swipe."}
+        {"color": GREEN, "blinks": 2, "message": "The system is starting up and not yet ready for a card swipe."} # 10
         ]
 
     # just a tool for readability
