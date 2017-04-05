@@ -46,19 +46,21 @@ class InitStateHandler(StateHandler):
                 try:
                     urllib.urlopen("http://google.com")
                     print("Already connected to a network")
-                except: urllib.error.URLError as e:
+                except:
                     # not already connect to a network, try to connect
                     # connect to the wifi if no current connection
-                    try:
-                        ret_val = connect_to_wifi(
-                                    args["LocalStorage"].read_config_value('wifi-ssid'),
-                                    args["LocalStorage"].read_config_value('wifi-password')
-                                    )
-                        if ret_val == False:
-                            print("Specified network is out of range")
-                    except:
-                        # either the network is out
-                        print("Specified network password is invalid or another error has occured")
+                    #try:
+                    ret_val = connect_to_wifi(
+                                args["LocalStorage"].read_config_value('wifi-ssid'),
+                                args["LocalStorage"].read_config_value('wifi-password')
+                                )
+                    if ret_val == False:
+                        print("Specified network is out of range")
+                    else:
+                        print("Something else went wrong...")
+                    #except:
+                    #    # either the network is out
+                    #    print("Specified network password is invalid or another error has occured")
             time.sleep(2)
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "TIMER"):
@@ -118,7 +120,7 @@ def connect_to_wifi(ssid, password):
                 print("Found a scheme for network ssid=" + str(network.ssid))
                 return scheme_lookup.activate()
             else:
-                print("Could not find a scheme for network ssid=" + )
+                print("Could not find a scheme for network ssid=" + configured_ssid)
                 new_scheme = wifi.Scheme.for_cell('wlan0', configured_ssid, cell, configured_password)
                 new_scheme.save()
                 return new_scheme.activate()
