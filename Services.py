@@ -87,11 +87,11 @@ class LEDIndicatorService(Service):
             # transition to off state
             next_state = "on"
         elif current_state == "waiting":
-            # 1s between .3s blinks where blink number is greater than 1
+            # 1s between .2s blinks where blink number is greater than 1
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
                     not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
                 print("LEDIndicator: Waiting...")
-            sleep(.3)
+            sleep(.2)
             next_state = "on"
         elif current_state == "on":
             if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
@@ -102,7 +102,7 @@ class LEDIndicatorService(Service):
                 next_state = "on"
             else:
                 next_state = "off"
-            sleep(.3)
+            sleep(.2)
         elif current_state == "off":
             # inc iterator
             self.fsm_iterator += 1
@@ -112,17 +112,17 @@ class LEDIndicatorService(Service):
             if self.fsm_iterator < self.current_blinks:
                 next_state = "on"
             elif self.current_blinks == 1:
-                # always cycle between .3s OFF/ON for blinks == 1
+                # always cycle between .2s OFF/ON for blinks == 1
                 self.fsm_iterator = 0
                 next_state = "on"
             else:
-                # perform .3s OFF/ON, then 1s wait for blinks > 1
+                # perform .2s OFF/ON, then 1s wait for blinks > 1
                 self.fsm_iterator = 0
                 next_state = "waiting"
-            sleep(.3)
+            sleep(.2)
         else:
             print("LEDIndicator: ERROR: Invalid state passed as current_state ->" + str(current_state))
-            sleep(.3)
+            sleep(.2)
 
         return next_state
 

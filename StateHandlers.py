@@ -93,7 +93,7 @@ class TempStateHandler(StateHandler):
             args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[10])
             # asyncronously write entry to the USB stick
             args["job_queue"].put(Jobs.AsyncWriteTimeEntryJob(args["event"].data, args["LocalStorage"]))
-            sleep(1) # block until done blinking (artificial processing time)
+            time.sleep(1) # block until done blinking (artificial processing time)
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
