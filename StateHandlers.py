@@ -105,7 +105,7 @@ class TempStateHandler(StateHandler):
             print("blinking blue")
             args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[11])
             print("sleeping")
-            sleep(.9) # allow it to blink, blocking okay cause shutting down
+            time.sleep(.9) # allow it to blink, blocking okay cause shutting down
             print("shutting down")
             os.system("sudo shutdown now") # note that this requires script to be started with sudo privileges
             # no return val, system is shutting down
