@@ -117,12 +117,12 @@ class ShutdownEventListener(EventListener):
             # poll for actuation of button every 10th of a second
             if GPIO.input(self.shutdown_pin):
                 # shutdown pressed, debounce once for simplicity
-                sleep(.1)
+                time.sleep(.1)
                 if GPIO.input(self.shutdown_pin):
                     # shutdown pressed for at least .1s, post the event
                     # note that this is very poor debouncing
                     self.eventQueue.put(Events.ShutdownEvent())
-            sleep(.1)
+            time.sleep(.1)
 
 #################################################################################
 # House keeping..close interfaces and processes
