@@ -35,6 +35,12 @@ class AsyncWriteTimeEntryJob(Job):
 
     def run_prod(self):
         name = self.localStorage.lookup_id(str(self.student_id))
+        if name == None:
+            # flash red b/c user not in system
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[4])
+        else:
+            # flash green b/c user is in system
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[10])
         epoch = time.time()
         timestamp = datetime.fromtimestamp(epoch).strftime('%Y-%m-%d %H:%M:%S')
 
