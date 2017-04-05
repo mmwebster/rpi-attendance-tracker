@@ -54,7 +54,7 @@ class InitStateHandler(StateHandler):
                 except:
                     # not already connect to a network, try to connect
                     # connect to the wifi if no current connection
-                    #try:
+                    try:
                     ret_val = connect_to_wifi(
                                 args["LocalStorage"].read_config_value('wifi-ssid'),
                                 args["LocalStorage"].read_config_value('wifi-password')
@@ -113,7 +113,7 @@ class TempStateHandler(StateHandler):
 ##########################################################################################
 # Utility functions
 ##########################################################################################
-def connect_to_wifi(ssid, password):
+def connect_to_wifi(configured_ssid, configured_password):
     # find all available networks
     networks = wifi.Cell.all('wlan0')
     # determine if any ssids match that specified in the config file
@@ -126,7 +126,7 @@ def connect_to_wifi(ssid, password):
                 return scheme_lookup.activate()
             else:
                 print("Could not find a scheme for network ssid=" + configured_ssid)
-                new_scheme = wifi.Scheme.for_cell('wlan0', configured_ssid, cell, configured_password)
+                new_scheme = wifi.Scheme.for_cell('wlan0', configured_ssid, network, configured_password)
                 new_scheme.save()
                 return new_scheme.activate()
 
