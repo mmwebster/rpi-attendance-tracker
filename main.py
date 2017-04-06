@@ -49,7 +49,7 @@ def main():
                        EventListeners.ShutdownEventListener() ]
     stateHandlers = [ StateHandlers.InitStateHandler,
                       StateHandlers.TempStateHandler ]
-    enabledLibs = [ LocalStorage() ]
+    enabledLibs = [ LocalStorage(LEDQueue) ]
     # common params are passed to every state handler
     commonArgs = { "LEDQueue": LEDQueue, "PiezoQueue": PiezoQueue }
 

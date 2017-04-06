@@ -45,19 +45,22 @@ class AsyncWriteTimeEntryJob(Job):
         epoch = time.time()
         timestamp = datetime.fromtimestamp(epoch).strftime('%Y-%m-%d %H:%M:%S')
 
+        # get the timestamped filename that this entry belongs in
+        path_preface = self.localStorage.get_current_time_period()
+
         # write time entries dependent on student's clock in/out state
         if (str(self.student_id) in self.localStorage.time_in_entries):
             # time entry started, close it out
             # write the "out" entry
             out_entry = [[name, self.student_id, timestamp]]
-            self.localStorage.append_rows("time_out_entries.csv", out_entry)
+            self.localStorage.append_rows(path_preface + "time_out_entries.csv", out_entry)
             print("Appended Out entry: " + str(out_entry))
             prev_entry = self.localStorage.time_in_entries[str(self.student_id)]
             # write the "in/out" entry
             elapsed_hours = round(((epoch - prev_entry["epoch_in"]) / 60), 2)
             in_out_entry = \
                 [[name, self.student_id, prev_entry["ts_in"], timestamp, elapsed_hours]]
-            self.localStorage.append_rows("time_entries.csv", in_out_entry)
+            self.localStorage.append_rows(path_preface + "time_entries.csv", in_out_entry)
             # remove "in" entry from the localStorage hash
             del self.localStorage.time_in_entries[str(self.student_id)]
             print("Appended In/Out entry: " + str(in_out_entry))
@@ -65,7 +68,7 @@ class AsyncWriteTimeEntryJob(Job):
             # now previous entry, start a new one
             # write the "in" entry
             in_entry = [[name, self.student_id, timestamp]]
-            self.localStorage.append_rows("time_in_entries.csv", in_entry)
+            self.localStorage.append_rows(path_preface + "time_in_entries.csv", in_entry)
             # add "in" entry to hash
             self.localStorage.time_in_entries[str(self.student_id)] = \
                 {"epoch_in": epoch, "ts_in": timestamp}

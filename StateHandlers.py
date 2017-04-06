@@ -106,8 +106,10 @@ class TempStateHandler(StateHandler):
             args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[11])
             print("sleeping")
             time.sleep(.9) # allow it to blink, blocking okay cause shutting down
-            print("shutting down")
-            os.system("sudo shutdown now") # note that this requires script to be started with sudo privileges
+            print("SYSTEM SHUTTING DOWN")
+            if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
+                    not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
+                os.system("sudo shutdown now")
             # no return val, system is shutting down
         elif (args["event"].name() == "EXIT"):
             # exiting INIT state
