@@ -24,17 +24,20 @@ from LEDIndicator import LEDIndicator
 #       shared csv data is not corrupted. Can also lock objects, but easiest way is to
 #       implement job queue allowing only one job to run at a time
 class AsyncWriteTimeEntryJob(Job):
-    def __init__(self, card_event_data, localStorage, ledQueue):
+    #check members.csv here, create slackupdate topic job
+    def __init__(self, card_event_data, localStorage, ledQueue, MembersQueue):
         Job.__init__(self)
         self.student_id = card_event_data["id"]
         self.localStorage = localStorage
         self.ledQueue = ledQueue
+        self.MembersQueue = MembersQueue
 
     def run_test(self):
         # print("Writing time entry...")
         self.run_prod()
 
     def run_prod(self):
+        # lookup user's name
         name = self.localStorage.lookup_id(str(self.student_id))
         if name == "NOT_FOUND":
             # flash red b/c user not in system
@@ -42,6 +45,11 @@ class AsyncWriteTimeEntryJob(Job):
         else:
             # flash green b/c user is in system
             self.ledQueue.put(LEDIndicator.LED_TYPES[10])
+
+        # lookup if user is a member
+        is_member = self.localStorage.is_member(str(self.student_id))
+
+        # calculate timing
         epoch = time.time()
         timestamp = datetime.fromtimestamp(epoch).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -50,6 +58,12 @@ class AsyncWriteTimeEntryJob(Job):
 
         # write time entries dependent on student's clock in/out state
         if (str(self.student_id) in self.localStorage.time_in_entries):
+            # queue members decrement event to potentially decrement number of members in lab
+            if is_member:
+                print("User is member, decrementing")
+                self.MembersQueue.put("DECREMENT")
+            else:
+                print("User is not member")
             # time entry started, close it out
             # write the "out" entry
             out_entry = [[name, self.student_id, timestamp]]
@@ -65,6 +79,12 @@ class AsyncWriteTimeEntryJob(Job):
             del self.localStorage.time_in_entries[str(self.student_id)]
             print("Appended In/Out entry: " + str(in_out_entry))
         else:
+            # queue members increment event to potentially change lab open status
+            if is_member:
+                print("User is member, incrementing")
+                self.MembersQueue.put("INCREMENT")
+            else:
+                print("User is not member")
             # now previous entry, start a new one
             # write the "in" entry
             in_entry = [[name, self.student_id, timestamp]]
@@ -73,6 +93,7 @@ class AsyncWriteTimeEntryJob(Job):
             self.localStorage.time_in_entries[str(self.student_id)] = \
                 {"epoch_in": epoch, "ts_in": timestamp}
             print("Appended In entry: " + str(in_entry))
+
 
 # TODO: this should be paired with a service, jobs are one-off
 class AsyncPeriodicSyncWithDropboxJob(Job):
@@ -95,6 +116,21 @@ class AsyncPeriodicSyncWithDropboxJob(Job):
             for file_name in self.file_names:
                 dbx.upload(file_name)
 
+# class UpdateSlackTopicJob(Job):
+#     # @param period Time in seconds to wait between syncs
+#     def __init__(self, lab_open):
+#         Job.__init__(self)
+#         self.lab_open = lab_open
+#         # necessary since in inf. loop, temporary until ported to service
+#         self.setDaemon(False)
+
+#     def run_prod(self):
+#         slack_client = SlackClient('xoxp-6044688833-126852609376-152389424672-d7934b0e899443e22b0d23051863c5cf')
+#         if lab_open:
+#             changeTopic('C0Q6A61K7', "Lab Open")
+#         else:
+#             changeTopic('C0Q6A61K7', "Lab Closed")
+
 # class AsyncChangeLEDIndicatorJob(Job):
 #     def __init__(self, error_code, error_param, LEDQueue):
 #         Job.__init__(self)
@@ -105,6 +141,12 @@ class AsyncPeriodicSyncWithDropboxJob(Job):
 #         
 #         if self.error_code
 #             # TODO: .. FINISH implementation to change state (push to queue)
+
+#################################################################################
+# Utility Functions
+#################################################################################
+
+
 
 
 #################################################################################

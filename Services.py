@@ -11,6 +11,7 @@ if not 'ATTENDANCE_TRACKER_TEST' in ENV or \
 from pyfsm.Service import Service
 from LEDIndicator import LEDIndicator
 from Piezo import Piezo
+from slackclient import SlackClient
 
 #################################################################################
 # Perform initializations
@@ -236,6 +237,49 @@ class PiezoService(Service):
                 not int(ENV['ATTENDANCE_TRACKER_TEST']) == 1:
             print("Piezo: Cleaning up GPIO")
             GPIO.cleanup()
+
+class LabStatusService(Service):
+    def __init__(self, auth_token, channel_id, membersQueue):
+        Service.__init__(self)
+        self.auth_token = auth_token
+        self.channel_id = channel_id
+        self.slack_client = SlackClient(self.auth_token)
+        self.members_in_lab = 0
+        self.membersQueue = membersQueue
+        print("LabStatusService: Finished initializing")
+
+    # lifetime of the event listener
+    def run_prod(self):
+        while True:
+            # block until a new member event can be fetched
+            new_member_event = self.membersQueue.get(True)
+            # increment or decrement the number of members based on the swipe polarity
+            if new_member_event == "INCREMENT":
+                # incrementing
+                # check if crossing 0->1 threshold
+                if self.members_in_lab == 0:
+                    # crossing threshold, post lab open
+                    self.changeTopic("LAB OPEN")
+                    print("LabStatusService: Changing lab status to OPEN")
+                self.members_in_lab += 1
+            else:
+                # decrementing
+                # check if crossing 1->0 threshold
+                if self.members_in_lab == 1:
+                    # crossing threshold, post lab closed
+                    self.changeTopic("LAB CLOSED")
+                    print("LabStatusService: Changing lab status to CLOSED")
+                self.members_in_lab -= 1
+        
+    def changeTopic(self, message):
+        self.slack_client.api_call(
+            "channels.setTopic",
+            token=self.auth_token,
+            channel=self.channel_id,
+            topic=message
+        )
+        # 'xoxp-6044688833-126852609376-152389424672-d7934b0e899443e22b0d23051863c5cf'
+        #  'xoxp-6044688833-6367767126-149775464486-509594e99b4ff1bd4bce030034de07ea',
 
 
 #################################################################################
