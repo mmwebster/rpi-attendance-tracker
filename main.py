@@ -45,7 +45,7 @@ def main():
     MembersQueue = PriorityQueue() # thread-safe queue
     services = [ Services.LEDIndicatorService(LEDQueue), Services.PiezoService(PiezoQueue),
                  Services.LabStatusService(
-                    'xoxp-6044688833-126852609376-152389424672-d7934b0e899443e22b0d23051863c5cf',
+                    ENV['SLACK_OAUTH_TOKEN'],
                     'C0Q6A61K7',
                     MembersQueue)
                 ]
