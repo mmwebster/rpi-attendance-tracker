@@ -253,13 +253,14 @@ class LabStatusService(Service):
         while True:
             # block until a new member event can be fetched
             new_member_event = self.membersQueue.get(True)
+            member_first_name = new_member_event["name"].split(" ")[0]
             # increment or decrement the number of members based on the swipe polarity
-            if new_member_event == "INCREMENT":
+            if new_member_event["type"] == "INCREMENT":
                 # incrementing
                 # check if crossing 0->1 threshold
                 if self.members_in_lab == 0:
                     # crossing threshold, post lab open
-                    self.changeTopic("LAB OPEN")
+                    self.changeTopic("LAB OPENED by " + str(member_first_name))
                     print("LabStatusService: Changing lab status to OPEN")
                 self.members_in_lab += 1
             else:
@@ -267,7 +268,7 @@ class LabStatusService(Service):
                 # check if crossing 1->0 threshold
                 if self.members_in_lab == 1:
                     # crossing threshold, post lab closed
-                    self.changeTopic("LAB CLOSED")
+                    self.changeTopic("LAB CLOSED by " + str(member_first_name))
                     print("LabStatusService: Changing lab status to CLOSED")
                 self.members_in_lab -= 1
         

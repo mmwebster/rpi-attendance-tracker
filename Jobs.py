@@ -61,7 +61,7 @@ class AsyncWriteTimeEntryJob(Job):
             # queue members decrement event to potentially decrement number of members in lab
             if is_member:
                 print("User is member, decrementing")
-                self.MembersQueue.put("DECREMENT")
+                self.MembersQueue.put({ "type": "DECREMENT", "name": name })
             else:
                 print("User is not member")
             # time entry started, close it out
@@ -82,7 +82,7 @@ class AsyncWriteTimeEntryJob(Job):
             # queue members increment event to potentially change lab open status
             if is_member:
                 print("User is member, incrementing")
-                self.MembersQueue.put("INCREMENT")
+                self.MembersQueue.put({ "type": "INCREMENT", "name": name })
             else:
                 print("User is not member")
             # now previous entry, start a new one
