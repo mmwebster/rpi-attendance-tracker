@@ -244,7 +244,8 @@ class LabStatusService(Service):
         self.auth_token = auth_token
         self.channel_id = channel_id
         self.slack_client = SlackClient(self.auth_token)
-        self.members_in_lab = 0
+        self.num_members_in_lab = 0
+        self.members_in_lab = []
         self.membersQueue = membersQueue
         print("LabStatusService: Finished initializing")
 
@@ -257,20 +258,30 @@ class LabStatusService(Service):
             # increment or decrement the number of members based on the swipe polarity
             if new_member_event["type"] == "INCREMENT":
                 # incrementing
+                # add user to members list
+                self.members_in_lab.append(member_first_name)
                 # check if crossing 0->1 threshold
-                if self.members_in_lab == 0:
+                if self.num_members_in_lab == 0:
                     # crossing threshold, post lab open
                     self.changeTopic("LAB OPENED by " + str(member_first_name))
                     print("LabStatusService: Changing lab status to OPEN")
-                self.members_in_lab += 1
+                else:
+                    # post the members in lab
+                    self.changeTopic("LAB OPEN with: " + ", ".join(self.members_in_lab))
+                self.num_members_in_lab += 1
             else:
+                # remove user from members list
+                self.members_in_lab.remove(member_first_name)
                 # decrementing
                 # check if crossing 1->0 threshold
-                if self.members_in_lab == 1:
+                if self.num_members_in_lab == 1:
                     # crossing threshold, post lab closed
                     self.changeTopic("LAB CLOSED by " + str(member_first_name))
                     print("LabStatusService: Changing lab status to CLOSED")
-                self.members_in_lab -= 1
+                else:
+                    # post the members in lab
+                    self.changeTopic("LAB OPEN with: " + ", ".join(self.members_in_lab))
+                self.num_members_in_lab -= 1
         
     def changeTopic(self, message):
         self.slack_client.api_call(
