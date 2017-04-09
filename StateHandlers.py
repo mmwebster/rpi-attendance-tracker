@@ -97,7 +97,8 @@ class TempStateHandler(StateHandler):
                 args["LocalStorage"],
                 args["common_args"]["LEDQueue"],
                 args["common_args"]["MembersQueue"]))
-            time.sleep(1) # block until done blinking (artificial processing time)
+            time.sleep(1.5) # block until done blinking (artificial processing time)
+            args["common_args"]["LEDQueue"].put(LEDIndicator.LED_TYPES[0])
             return { "next_state": "TEMP", "did_error": False }
         elif (args["event"].name() == "SHUTDOWN"):
             # received a shutdown event, close all interfaces and run sudo shutdown -h now
